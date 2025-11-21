@@ -29,8 +29,8 @@ export const EnvSchema = z.object({
 
   kafka: z.object({
     enabled: z.boolean(),
-    brokers: z.array(z.string()),
-    clientId: z.string(),
+    brokers: z.array(z.string()).nonempty(),
+    clientId: z.string().min(1),
   }),
 });
 

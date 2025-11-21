@@ -2,6 +2,7 @@ import "dotenv/config";
 import type { Server } from "http";
 import app from "./app";
 import { getDb, testDbConnection } from "./config/db";
+import { getKafkaProducer, testKafkaConnection } from "./config/kafka";
 import { getRedis, testRedisConnection } from "./config/redis";
 
 const PORT = process.env.PORT || 1234;
@@ -11,6 +12,7 @@ let server: Server;
 const startServer = async () => {
   await testDbConnection();
   await testRedisConnection();
+  await testKafkaConnection();
 
   server = app.listen(PORT, () => {
     console.debug(`Server running at http://localhost:${PORT}`);
@@ -23,12 +25,12 @@ startServer();
 // Graceful Shutdown Handler
 // ----------------------------
 const gracefulShutdown = async (signal: string) => {
-  console.debug(`\n ## Received ${signal}. Shutting down gracefully...`);
+  console.debug(`\n## Received ${signal}. Shutting down gracefully...`);
 
   // 1. Stop accepting new requests
   if (server) {
     server.close(() => {
-      console.debug("HTTP server closed.");
+      console.debug("## HTTP server closed.");
     });
   }
 
@@ -50,7 +52,15 @@ const gracefulShutdown = async (signal: string) => {
     console.error("## Error closing Redis client:", err);
   }
 
-  // 4. Exit
+  // 4. Close Kafka
+  try {
+    const producer = getKafkaProducer();
+    await producer.disconnect();
+    console.debug("## Kafka producer disconnected.");
+  } catch (err) {
+    console.error("## Error closing Kafka producer:", err);
+  }
+
   process.exit(0);
 };
 
