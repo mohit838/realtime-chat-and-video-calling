@@ -5,90 +5,86 @@ import { getDb } from "../config/db";
 
 const MIGRATIONS_DIR = path.resolve(process.cwd(), "migrations");
 
-type Direction = "up" | "down" | "rollback";
+type Direction = "up" | "down";
 
-interface RowBatch extends RowDataPacket {
-  batch: number | null;
-}
-
-interface RowName extends RowDataPacket {
+interface MigrationRow extends RowDataPacket {
+  id: number;
   name: string;
+  batch: number;
+  direction: string;
 }
 
-// Extract 0001_init from filename
-function extractName(file: string): string {
-  return file.replace(/\.(up|down)\.sql$/, "");
-}
-
+// ------------------------------
+// Utilities
+// ------------------------------
 function readSql(file: string): string {
   return fs.readFileSync(path.join(MIGRATIONS_DIR, file), "utf8").trim();
 }
 
-// Ensure migrations table exists
-async function ensureMigrationTable(): Promise<void> {
+function extractName(file: string): string {
+  return file.replace(/\.(up|down)\.sql$/, "");
+}
+
+async function ensureTable() {
   const db = getDb();
   await db.execute(`
     CREATE TABLE IF NOT EXISTS migrations (
       id INT AUTO_INCREMENT PRIMARY KEY,
       name VARCHAR(255) NOT NULL,
       batch INT NOT NULL,
-      direction ENUM('up', 'down') NOT NULL,
+      direction ENUM('up','down') NOT NULL,
       executed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
+    )
   `);
 }
 
-// Get applied migrations for a direction
-async function getApplied(direction: "up" | "down"): Promise<string[]> {
+// ------------------------------
+// Fetch helpers
+// ------------------------------
+async function getApplied(direction: Direction): Promise<string[]> {
   const db = getDb();
-  const [rows] = await db.query<RowName[]>(
-    "SELECT name FROM migrations WHERE direction = ? ORDER BY id ASC",
+  const [rows] = await db.query<MigrationRow[]>(
+    "SELECT name FROM migrations WHERE direction = ? ORDER BY id",
     [direction]
   );
 
   return rows.map((r) => r.name);
 }
 
-// Record migration
-async function recordMigration(name: string, direction: Direction, batch: number): Promise<void> {
-  const db = getDb();
-  await db.query("INSERT INTO migrations (name, direction, batch) VALUES (?, ?, ?)", [
-    name,
-    direction,
-    batch,
-  ]);
-}
-
-// Next batch number
 async function getNextBatch(): Promise<number> {
   const db = getDb();
-  const [rows] = await db.query<RowBatch[]>("SELECT MAX(batch) AS batch FROM migrations");
-  const lastBatch = rows[0]?.batch ?? 0;
-  return lastBatch + 1;
+  const [rows] = await db.query<(RowDataPacket & { batch: number })[]>(
+    "SELECT MAX(batch) AS batch FROM migrations WHERE direction = 'up'"
+  );
+
+  return (rows[0]?.batch ?? 0) + 1;
 }
 
-// Run a single migration file
-async function runMigration(file: string, direction: "up" | "down", batch: number): Promise<void> {
+// ------------------------------
+// Apply a single migration
+// ------------------------------
+async function runMigration(file: string, direction: Direction, batch: number) {
   const db = getDb();
-  const name = extractName(file);
   const sql = readSql(file);
-
-  if (!sql) {
-    console.error(`## Empty SQL in file: ${file}`);
-    process.exit(1);
-  }
+  const name = extractName(file);
 
   const conn = await db.getConnection();
+
   try {
     await conn.beginTransaction();
     await conn.query(sql);
-    await recordMigration(name, direction, batch);
-    await conn.commit();
 
-    console.debug(`## Applied: ${file}`);
+    await conn.query("INSERT INTO migrations (name, direction, batch) VALUES (?, ?, ?)", [
+      name,
+      direction,
+      batch,
+    ]);
+
+    await conn.commit();
+    console.debug(`${direction.toUpperCase()}: ${file}`);
   } catch (err) {
     await conn.rollback();
-    console.error(`## Migration FAILED: ${file}`);
+    console.error(`FAILED: ${file}`);
     console.error(err);
     process.exit(1);
   } finally {
@@ -96,134 +92,132 @@ async function runMigration(file: string, direction: "up" | "down", batch: numbe
   }
 }
 
-// Run ALL migrations for direction
-async function runAll(direction: "up" | "down"): Promise<void> {
-  const applied = await getApplied(direction);
-
+// ------------------------------
+// UP ALL
+// ------------------------------
+async function upAll() {
   const files = fs
     .readdirSync(MIGRATIONS_DIR)
-    .filter((f) => f.endsWith(`.${direction}.sql`))
+    .filter((f) => f.endsWith(".up.sql"))
     .sort();
 
-  const nextBatch = await getNextBatch();
+  const applied = await getApplied("up");
+  const batch = await getNextBatch();
 
-  for (const file of files) {
-    const name = extractName(file);
+  for (const f of files) {
+    if (applied.includes(extractName(f))) {
+      console.debug(`SKIP: ${f}`);
+      continue;
+    }
+    await runMigration(f, "up", batch);
+  }
+}
 
-    if (applied.includes(name)) {
-      console.debug(`## Skipped (already applied): ${file}`);
+// ------------------------------
+// DOWN ALL
+// ------------------------------
+async function downAll() {
+  const files = fs
+    .readdirSync(MIGRATIONS_DIR)
+    .filter((f) => f.endsWith(".down.sql"))
+    .sort()
+    .reverse(); // important
+
+  const appliedDown = await getApplied("down");
+
+  for (const f of files) {
+    const name = extractName(f);
+
+    if (appliedDown.includes(name)) {
+      console.debug(`SKIP: ${f}`);
       continue;
     }
 
-    await runMigration(file, direction, nextBatch);
+    await runMigration(f, "down", 0);
   }
-
-  console.debug("## Completed all migrations.");
 }
 
-// Run ONE migration
-async function runOne(direction: "up" | "down", name: string): Promise<void> {
-  const files = fs
-    .readdirSync(MIGRATIONS_DIR)
-    .filter((f) => f.startsWith(name) && f.endsWith(`.${direction}.sql`));
-
-  if (files.length === 0) {
-    console.error(`## Migration not found: ${name}.${direction}.sql`);
-    process.exit(1);
-  }
-
-  const nextBatch = await getNextBatch();
-  await runMigration(files[0], direction, nextBatch);
-}
-
-// ---------- ROLLBACK LOGIC ----------
-
-// Get last batch that ran as UP
-async function getLastBatchNumber(): Promise<number | null> {
+// ------------------------------
+// ROLLBACK LAST BATCH
+// ------------------------------
+async function rollback() {
   const db = getDb();
-  const [rows] = await db.query<RowBatch[]>(
-    "SELECT MAX(batch) AS batch FROM migrations WHERE direction = 'up'"
+
+  const [rows] = await db.query<MigrationRow[]>(
+    "SELECT batch FROM migrations WHERE direction='up' ORDER BY batch DESC LIMIT 1"
   );
-  return rows[0]?.batch ?? null;
-}
 
-// Get migrations for a specific batch
-async function getBatchMigrations(batch: number): Promise<RowName[]> {
-  const db = getDb();
-  const [rows] = await db.query<RowName[]>(
-    "SELECT name FROM migrations WHERE batch = ? AND direction = 'up' ORDER BY id DESC",
+  if (rows.length === 0) {
+    console.debug("No batches to rollback.");
+    return;
+  }
+
+  const batch = rows[0].batch;
+
+  const [migs] = await db.query<MigrationRow[]>(
+    "SELECT name FROM migrations WHERE batch = ? AND direction='up' ORDER BY id DESC",
     [batch]
   );
-  return rows;
-}
 
-// Rollback last batch (Laravel-style)
-async function rollbackBatch(batch: number): Promise<void> {
-  console.debug(`## Rolling back batch: ${batch}`);
-
-  const migrations = await getBatchMigrations(batch);
-
-  if (migrations.length === 0) {
-    console.debug(`## No migrations found for batch ${batch}`);
-    process.exit(0);
-  }
-
-  for (const m of migrations) {
+  for (const m of migs) {
     const downFile = fs
       .readdirSync(MIGRATIONS_DIR)
       .find((f) => f.startsWith(m.name) && f.endsWith(".down.sql"));
 
     if (!downFile) {
-      console.error(`## Missing down migration for: ${m.name}`);
+      console.error(`Missing down file for ${m.name}`);
       process.exit(1);
     }
 
     await runMigration(downFile, "down", batch);
+
+    await db.execute("DELETE FROM migrations WHERE name = ? AND direction='up'", [m.name]);
+    await db.execute("DELETE FROM migrations WHERE name = ? AND direction='down'", [m.name]);
   }
 
-  console.debug(`## Successfully rolled back batch ${batch}`);
+  console.debug(`Rolled back batch ${batch}`);
 }
 
-// ---------- MAIN CLI ----------
-async function main(): Promise<void> {
-  await ensureMigrationTable();
+// ------------------------------
+// MAIN
+// ------------------------------
+(async () => {
+  await ensureTable();
 
-  const direction = process.argv[2] as Direction | undefined;
+  const cmd = process.argv[2];
   const name = process.argv[3];
 
-  // --------- ROLLBACK MODE ---------
-  if (direction === "rollback") {
-    const batchArg = name ? Number(name) : null;
-    const lastBatch = batchArg || (await getLastBatchNumber());
+  if (cmd === "up") {
+    if (name) {
+      const file = fs
+        .readdirSync(MIGRATIONS_DIR)
+        .find((f) => f.startsWith(name) && f.endsWith(".up.sql"));
 
-    if (!lastBatch) {
-      console.debug("## No batches to rollback.");
-      process.exit(0);
+      if (!file) return console.error("Migration not found.");
+      const batch = await getNextBatch();
+      await runMigration(file, "up", batch);
+    } else {
+      await upAll();
     }
-
-    await rollbackBatch(lastBatch);
-    process.exit(0);
-  }
-
-  // --------- UP / DOWN ---------
-  if (!direction || (direction !== "up" && direction !== "down")) {
-    console.error("Usage:");
-    console.error("  npm run migrate up");
-    console.error("  npm run migrate down");
-    console.error("  npm run migrate up 0001_init");
-    console.error("  npm run migrate down 0001_init");
-    console.error("  npm run migrate rollback");
-    console.error("  npm run migrate rollback 2");
-    process.exit(1);
-  }
-
-  if (name) {
-    await runOne(direction, name);
+  } else if (cmd === "down") {
+    if (name) {
+      const file = fs
+        .readdirSync(MIGRATIONS_DIR)
+        .find((f) => f.startsWith(name) && f.endsWith(".down.sql"));
+      if (!file) return console.error("Migration not found.");
+      await runMigration(file, "down", 0);
+    } else {
+      await downAll();
+    }
+  } else if (cmd === "rollback") {
+    await rollback();
   } else {
-    await runAll(direction);
+    console.debug("Usage:");
+    console.debug("  npm run migrate up");
+    console.debug("  npm run migrate up 0001_init");
+    console.debug("  npm run migrate down");
+    console.debug("  npm run migrate rollback");
   }
 
   process.exit(0);
-}
-
-main();
+})();
