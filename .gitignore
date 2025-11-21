@@ -1,16 +1,40 @@
-node_modules
-dist
+# Node modules
+node_modules/
+
+# Build output
+dist/
+build/
+.nyc_output/
+
+# Environment files
 .env
-.env.test
+.env.*
+!.env.example
+
+# System files
 .DS_Store
+
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
-.idea
-# .vscode
-test-results
-coverage
+logs/
+
+# IDE / Editor configs
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Test & Coverage
+coverage/
 coverage-final.json
-.nyc_output
+test-results/
+
+# TypeScript cache
 .tsbuildinfo
+
+# Docker artifacts
+*.pid
+*.log
