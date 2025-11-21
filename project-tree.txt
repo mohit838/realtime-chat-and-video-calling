@@ -1,0 +1,14 @@
+.
+├── DEV_GUIDE.md
+├── docker-compose.yml
+├── Dockerfile
+├── eslint.config.js
+├── package.json
+├── package-lock.json
+├── project-tree.txt
+├── README.md
+├── src
+│   └── server.ts
+└── tsconfig.json
+
+1 directory, 10 files

@@ -1,0 +1,56 @@
+{
+  "name": "realtime-chat-and-video-calling",
+  "version": "1.0.0",
+  "description": "Fun project for real-time chat and video calling using WebRTC and Socket.io",
+  "keywords": [
+    "chat",
+    "video-calling",
+    "webrtc",
+    "socket.io",
+    "typescript",
+    "express"
+  ],
+  "author": "Mohitul Islam",
+  "license": "ISC",
+  "main": "dist/server.js",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "format": "prettier --write .",
+    "tsc-check": "tsc --noEmit",
+    "build": "tsc",
+    "dev": "nodemon --watch src --exec ts-node --transpile-only src/server.ts",
+    "start": "node dist/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mohit838/realtime-chat-and-video-calling.git"
+  },
+  "dependencies": {
+    "dotenv": "17.2.3",
+    "express": "5.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/express": "5.0.5",
+    "@types/node": "24.10.1",
+    "@typescript-eslint/eslint-plugin": "8.47.0",
+    "@typescript-eslint/parser": "8.47.0",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "nodemon": "3.1.11",
+    "prettier": "^3.6.2",
+    "ts-node": "10.9.2",
+    "typescript": "5.9.3",
+    "typescript-eslint": "^8.47.0"
+  },
+  "bugs": {
+    "url": "https://github.com/mohit838/realtime-chat-and-video-calling/issues"
+  },
+  "homepage": "https://github.com/mohit838/realtime-chat-and-video-calling#readme",
+  "engines": {
+    "node": ">=22.20.0"
+  }
+}

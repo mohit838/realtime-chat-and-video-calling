@@ -1,0 +1,48 @@
+{
+  // TypeScript
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.preferences.quoteStyle": "double",
+  "typescript.suggest.autoImports": true,
+
+  // Formatting
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // Linting
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "always",
+    "source.organizeImports": "always"
+  },
+
+  // Files
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": false,
+    "**/.git": true,
+    "**/.vscode": false,
+    "**/.husky": true
+  },
+
+  // Terminal
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.scrollback": 10000,
+  "git.enableSmartCommit": true,
+  "git.suggestSmartCommit": false,
+
+  // Intellisense performance
+  "files.maxMemoryForLargeFilesMB": 8192,
+  "editor.minimap.enabled": false,
+
+  // Errors & warnings
+  "problems.showCurrentInStatus": true,
+  "problems.autoReveal": true,
+
+  // Prettier
+  "prettier.singleQuote": false,
+  "prettier.semi": true,
+  "prettier.printWidth": 100,
+  "prettier.tabWidth": 2,
+  "cSpell.words": ["webrtc"]
+}

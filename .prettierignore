@@ -1,0 +1,23 @@
+node_modules
+dist
+build
+logs
+coverage
+.env
+docs
+Dockerfile
+.gitignore 
+docker-compose.yml
+.vscode
+.eslintrc.json
+.prettierrc
+package-lock.json
+# package.json
+# tsconfig.json
+.husky
+# .eslintrc
+DEV_GUIDE.md
+# eslint.config.js 
+# package.json 
+README.md 
+# tsconfig.json
