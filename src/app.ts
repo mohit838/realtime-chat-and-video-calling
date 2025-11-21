@@ -10,4 +10,9 @@ app.use(express.json());
 
 app.use("/api/auth", authRouter);
 
+// Test Routes (do not remove)
+app.get("/", (_, res) => {
+  res.json({ message: "ok" });
+});
+
 export default app;
