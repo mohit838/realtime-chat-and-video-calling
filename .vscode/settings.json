@@ -44,5 +44,8 @@
   "prettier.semi": true,
   "prettier.printWidth": 100,
   "prettier.tabWidth": 2,
-  "cSpell.words": ["webrtc"]
+  "cSpell.words": [
+    "webrtc"
+  ],
+  "chatgpt.commentCodeLensEnabled": false
 }
