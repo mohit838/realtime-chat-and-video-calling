@@ -1,14 +1,60 @@
-import express from "express";
+import "dotenv/config";
+import type { Server } from "http";
+import app from "./app";
+import { getDb, testDbConnection } from "./config/db";
 
-const app = express();
+const PORT = process.env.PORT || 1234;
 
-// Middlewares
-app.use(express.json());
+let server: Server;
 
-app.get("/", (_, res) => res.json({ message: "ok" }));
+const startServer = async () => {
+  await testDbConnection();
 
-app.listen(1234, () => {
-  console.warn(`Server running on http://localhost:1234`);
+  server = app.listen(PORT, () => {
+    console.debug(`Server running at http://localhost:${PORT}`);
+  });
+};
+
+startServer();
+
+// ----------------------------
+// Graceful Shutdown Handler
+// ----------------------------
+const gracefulShutdown = async (signal: string) => {
+  console.debug(`\n ## Received ${signal}. Shutting down gracefully...`);
+
+  // 1. Stop accepting new requests
+  if (server) {
+    server.close(() => {
+      console.debug("HTTP server closed.");
+    });
+  }
+
+  // 2. Close MySQL pool
+  try {
+    const pool = getDb();
+    await pool.end();
+    console.debug("## MySQL pool closed.");
+  } catch (err) {
+    console.error("## Error closing MySQL pool:", err);
+  }
+
+  // 3. Exit process
+  process.exit(0);
+};
+
+// Signals to catch
+["SIGINT", "SIGTERM"].forEach((signal) => {
+  process.on(signal, () => gracefulShutdown(signal));
 });
 
-export default app;
+// Catch unhandled errors
+process.on("uncaughtException", (err) => {
+  console.error("## UNCAUGHT EXCEPTION:", err);
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (reason) => {
+  console.error("## UNHANDLED REJECTION:", reason);
+  process.exit(1);
+});
