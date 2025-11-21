@@ -20,7 +20,8 @@ export default [
     },
 
     rules: {
-      "prettier/prettier": "error",
+      // NOTE: Enable this rule if you want ESLint to report Prettier formatting issues
+      // "prettier/prettier": "error",
 
       "@typescript-eslint/no-unused-vars": [
         "warn",

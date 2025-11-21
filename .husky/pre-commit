@@ -1,16 +1,22 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-echo "ESLint check..."
+echo "🔍 ESLint check..."
 npm run lint || exit 1
 
-echo "Prettier format..."
+echo "🎨 Prettier format..."
 npm run format || exit 1
 
-echo "TypeScript noEmit check..."
+echo "🧪 TypeScript type-check (src)..."
 npm run tsc-check || exit 1
 
-echo "Building project..."
+echo "🧪 TypeScript type-check (tests)..."
+npm run tsc-test || exit 1
+
+echo "🧪 Running unit tests (Vitest)..."
+npm run test:unit --silent || exit 1
+
+echo "📦 Building project..."
 npm run build || exit 1
 
-echo "All checks passed!"
+echo "✅ All checks passed!"

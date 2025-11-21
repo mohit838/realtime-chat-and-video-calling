@@ -45,6 +45,7 @@
   "prettier.printWidth": 100,
   "prettier.tabWidth": 2,
   "cSpell.words": [
+    "Vitest",
     "webrtc"
   ],
   "chatgpt.commentCodeLensEnabled": false
