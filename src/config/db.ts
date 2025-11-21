@@ -1,14 +1,16 @@
 import mysql from "mysql2/promise";
+import { env } from "./env";
 
 let pool: mysql.Pool | null = null;
 
 export const getDb = () => {
   if (!pool) {
     pool = mysql.createPool({
-      host: process.env.DB_HOST || "localhost",
-      user: process.env.DB_USER || "root",
-      password: process.env.DB_PASS || "",
-      database: process.env.DB_NAME || "test_db",
+      host: env.db.host,
+      user: env.db.user,
+      port: env.db.port,
+      password: env.db.pass,
+      database: env.db.name,
       waitForConnections: true,
       connectionLimit: 10,
     });

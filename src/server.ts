@@ -2,6 +2,7 @@ import "dotenv/config";
 import type { Server } from "http";
 import app from "./app";
 import { getDb, testDbConnection } from "./config/db";
+import { getRedis, testRedisConnection } from "./config/redis";
 
 const PORT = process.env.PORT || 1234;
 
@@ -9,6 +10,7 @@ let server: Server;
 
 const startServer = async () => {
   await testDbConnection();
+  await testRedisConnection();
 
   server = app.listen(PORT, () => {
     console.debug(`Server running at http://localhost:${PORT}`);
@@ -39,7 +41,16 @@ const gracefulShutdown = async (signal: string) => {
     console.error("## Error closing MySQL pool:", err);
   }
 
-  // 3. Exit process
+  // 3. Close Redis connection
+  try {
+    const redis = getRedis();
+    redis.destroy();
+    console.debug("## Redis client disconnected.");
+  } catch (err) {
+    console.error("## Error closing Redis client:", err);
+  }
+
+  // 4. Exit
   process.exit(0);
 };
 
