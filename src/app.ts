@@ -1,13 +1,14 @@
+import { json } from "body-parser";
+import cors from "cors";
 import express from "express";
+
+import authRouter from "./modules/auth/auth.routes";
 
 const app = express();
 
-// Middlewares
-app.use(express.json());
+app.use(cors());
+app.use(json());
 
-// Test Routes
-app.get("/", (_, res) => {
-  res.json({ message: "ok" });
-});
+app.use("/api/auth", authRouter);
 
 export default app;

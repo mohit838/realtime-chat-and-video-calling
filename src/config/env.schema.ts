@@ -24,7 +24,7 @@ export const EnvSchema = z.object({
 
   jwt: z.object({
     secret: z.string().min(10),
-    expiry: z.string(),
+    expiry: z.union([z.number(), z.string()]),
   }),
 
   kafka: z.object({

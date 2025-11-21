@@ -2,17 +2,19 @@ import "dotenv/config";
 import type { Server } from "http";
 import app from "./app";
 import { getDb, testDbConnection } from "./config/db";
-import { getKafkaProducer, testKafkaConnection } from "./config/kafka";
-import { getRedis, testRedisConnection } from "./config/redis";
+import { env } from "./config/env";
+import { getKafkaProducer } from "./config/kafka";
+import { getRedis } from "./config/redis";
 
-const PORT = process.env.PORT || 1234;
+const PORT = env.app.port || 1234;
 
 let server: Server;
 
 const startServer = async () => {
   await testDbConnection();
-  await testRedisConnection();
-  await testKafkaConnection();
+  // NOTE:: Open later when needed
+  // await testRedisConnection();
+  // await testKafkaConnection();
 
   server = app.listen(PORT, () => {
     console.debug(`Server running at http://localhost:${PORT}`);
