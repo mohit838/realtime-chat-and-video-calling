@@ -1,20 +1,26 @@
 import express from "express";
-import { ROUTES } from "./config/constants";
 import { globalErrorHandler } from "./config/error-handler";
 import { registerMiddlewares } from "./config/middlewares";
-import { requestLogger } from "./middlewares/request-logger";
+import { setupSwagger } from "./config/swagger";
 import authRouter from "./modules/auth/auth.routes";
+
+import { ROUTES } from "./config/constants";
 
 const app = express();
 
+// Auto middlewares
 registerMiddlewares(app);
-app.use(requestLogger);
 
+// Swagger setup
+setupSwagger(app);
+
+// Routes
 app.use(ROUTES.AUTH, authRouter);
 
-app.get(ROUTES.ROOT, (_, res) => res.json({ message: "ok" }));
-app.post(ROUTES.HEALTH, (req, res) => res.json({ status: "ok", data: req.body }));
+// Test routes
+app.get("/", (_, res) => res.json({ message: "ok" }));
 
+// Global error handler
 app.use(globalErrorHandler);
 
 export default app;

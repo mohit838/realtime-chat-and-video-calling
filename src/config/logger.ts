@@ -27,7 +27,6 @@ export const logger = winston.createLogger({
       level: "info",
       db: `${env.mongo.uri}/${env.mongo.db}`,
       collection: env.mongo.collection,
-      options: { useUnifiedTopology: true },
       tryReconnect: true,
       storeHost: true,
     }),
