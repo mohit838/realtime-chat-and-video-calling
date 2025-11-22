@@ -24,13 +24,13 @@ export const EnvSchema = z.object({
 
   jwt: z.object({
     secret: z.string().min(10),
-    expiry: z.string(),
+    expiry: z.union([z.number(), z.string()]),
   }),
 
   kafka: z.object({
     enabled: z.boolean(),
-    brokers: z.array(z.string()),
-    clientId: z.string(),
+    brokers: z.array(z.string()).nonempty(),
+    clientId: z.string().min(1),
   }),
 });
 
