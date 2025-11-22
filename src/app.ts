@@ -1,23 +1,20 @@
-import cors from "cors";
 import express from "express";
+import { ROUTES } from "./config/constants";
+import { globalErrorHandler } from "./config/error-handler";
+import { registerMiddlewares } from "./config/middlewares";
+import { requestLogger } from "./middlewares/request-logger";
+import authRouter from "./modules/auth/auth.routes";
 
 const app = express();
 
-app.use(cors());
-app.use(express.json());
+registerMiddlewares(app);
+app.use(requestLogger);
 
-// Routes
-import authRouter from "./modules/auth/auth.routes";
+app.use(ROUTES.AUTH, authRouter);
 
-app.use("/api/auth", authRouter);
+app.get(ROUTES.ROOT, (_, res) => res.json({ message: "ok" }));
+app.post(ROUTES.HEALTH, (req, res) => res.json({ status: "ok", data: req.body }));
 
-// Test Routes (do not remove)
-app.get("/", (_, res) => {
-  res.json({ message: "ok" });
-});
-
-app.post("/health", (req, res) => {
-  res.json({ message: req.body });
-});
+app.use(globalErrorHandler);
 
 export default app;

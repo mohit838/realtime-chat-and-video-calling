@@ -1,6 +1,7 @@
 export interface AuthTokenPayload {
   id: number;
   email: string;
+  [key: string]: unknown;
 }
 
 export interface LoginResponse {
@@ -9,10 +10,10 @@ export interface LoginResponse {
 
 export interface RegisterResponse {
   userId: number;
-  message: string;
 }
 
 export interface AuthUser {
   id: number;
   email: string;
+  role?: string;
 }

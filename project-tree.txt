@@ -7,6 +7,12 @@
 │   └── env.yml
 ├── eslint.config.js
 ├── migrations
+│   ├── 000001_users.down.sql
+│   ├── 000001_users.up.sql
+│   ├── 000002_roles.down.sql
+│   ├── 000002_roles.up.sql
+│   ├── 000003_user_roles.down.sql
+│   ├── 000003_user_roles.up.sql
 │   └── 0001_init.up.sql
 ├── package.json
 ├── package-lock.json
@@ -16,24 +22,52 @@
 │   ├── app.ts
 │   ├── config
 │   │   ├── constants.ts
+│   │   ├── cors.ts
 │   │   ├── db.ts
 │   │   ├── env.schema.ts
 │   │   ├── env.ts
+│   │   ├── error-handler.ts
+│   │   ├── helmet.ts
 │   │   ├── kafka.ts
+│   │   ├── logger.ts
+│   │   ├── middlewares.ts
+│   │   ├── mongo-logger.ts
+│   │   ├── mongo-ttl.ts
+│   │   ├── rateLimiter.ts
 │   │   ├── redis.ts
+│   │   ├── shutdown.ts
 │   │   └── types.ts
+│   ├── middlewares
+│   │   └── request-logger.ts
 │   ├── migrations
 │   │   └── migrate.ts
-│   └── server.ts
+│   ├── modules
+│   │   └── auth
+│   │       ├── auth.controller.ts
+│   │       ├── auth.middleware.ts
+│   │       ├── auth.repository.ts
+│   │       ├── auth.routes.ts
+│   │       ├── auth.schema.ts
+│   │       ├── auth.service.ts
+│   │       ├── auth.types.ts
+│   │       └── auth.utils.ts
+│   ├── server.ts
+│   ├── types
+│   │   ├── api-response.ts
+│   │   ├── express.d.ts
+│   │   ├── extended-request.ts
+│   │   └── logger.ts
+│   └── utils
+│       ├── catchAsync.ts
+│       └── log.ts
 ├── test
 │   ├── integration
 │   │   └── server.integration.test.ts
 │   ├── server.test.ts
 │   └── unit
 │       └── math.test.ts
-├── test-results
 ├── tsconfig.json
 ├── tsconfig.test.json
 └── vitest.config.ts
 
-9 directories, 27 files
+13 directories, 57 files

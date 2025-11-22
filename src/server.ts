@@ -1,83 +1,24 @@
 import "dotenv/config";
 import type { Server } from "http";
 import app from "./app";
-import { getDb, testDbConnection } from "./config/db";
+import { testDbConnection } from "./config/db";
 import { env } from "./config/env";
-import { getKafkaProducer } from "./config/kafka";
-import { getRedis } from "./config/redis";
-
-const PORT = env.app.port || 1234;
+import { testKafkaConnection } from "./config/kafka";
+import { testRedisConnection } from "./config/redis";
+import { setupGracefulShutdown } from "./config/shutdown";
 
 let server: Server;
 
-const startServer = async () => {
-  await testDbConnection();
-  // NOTE:: Open later when needed
-  // await testRedisConnection();
-  // await testKafkaConnection();
+async function start() {
+  await Promise.all([testDbConnection(), testRedisConnection(), testKafkaConnection()]);
 
-  server = app.listen(PORT, () => {
-    console.debug(`Server running at http://localhost:${PORT}`);
+  server = app.listen(env.app.port, () => {
+    console.debug(`Server running at http://localhost:${env.app.port}`);
   });
-};
 
-startServer();
+  setupGracefulShutdown(server);
+}
 
-// ----------------------------
-// Graceful Shutdown Handler
-// ----------------------------
-const gracefulShutdown = async (signal: string) => {
-  console.debug(`\n## Received ${signal}. Shutting down gracefully...`);
+start();
 
-  // 1. Stop accepting new requests
-  if (server) {
-    server.close(() => {
-      console.debug("## HTTP server closed.");
-    });
-  }
-
-  // 2. Close MySQL pool
-  try {
-    const pool = getDb();
-    await pool.end();
-    console.debug("## MySQL pool closed.");
-  } catch (err) {
-    console.error("## Error closing MySQL pool:", err);
-  }
-
-  // 3. Close Redis connection
-  try {
-    const redis = getRedis();
-    redis.destroy();
-    console.debug("## Redis client disconnected.");
-  } catch (err) {
-    console.error("## Error closing Redis client:", err);
-  }
-
-  // 4. Close Kafka
-  try {
-    const producer = getKafkaProducer();
-    await producer.disconnect();
-    console.debug("## Kafka producer disconnected.");
-  } catch (err) {
-    console.error("## Error closing Kafka producer:", err);
-  }
-
-  process.exit(0);
-};
-
-// Signals to catch
-["SIGINT", "SIGTERM"].forEach((signal) => {
-  process.on(signal, () => gracefulShutdown(signal));
-});
-
-// Catch unhandled errors
-process.on("uncaughtException", (err) => {
-  console.error("## UNCAUGHT EXCEPTION:", err);
-  process.exit(1);
-});
-
-process.on("unhandledRejection", (reason) => {
-  console.error("## UNHANDLED REJECTION:", reason);
-  process.exit(1);
-});
+export { server };
