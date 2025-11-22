@@ -1,25 +1,22 @@
 import { SignJWT, jwtVerify } from "jose";
 import { env } from "../../config/env";
 import type { AuthTokenPayload } from "./auth.types";
+import { randomUUID } from "crypto";
 
-const encoder = new TextEncoder();
-const SECRET_KEY = encoder.encode(env.jwt.secret);
+const secret = new TextEncoder().encode(env.jwt.secret);
+
+export function generateRefreshToken(): string {
+  return randomUUID();
+}
 
 export async function signToken(payload: AuthTokenPayload) {
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
-    .setIssuedAt()
     .setExpirationTime(env.jwt.expiry)
-    .setIssuer("realtime-chat")
-    .setAudience("realtime-chat-user")
-    .sign(SECRET_KEY);
+    .sign(secret);
 }
 
-export async function verifyToken(token: string) {
-  const { payload } = await jwtVerify(token, SECRET_KEY, {
-    issuer: "realtime-chat",
-    audience: "realtime-chat-user",
-  });
-
+export async function verifyToken(token: string): Promise<AuthTokenPayload> {
+  const { payload } = await jwtVerify(token, secret);
   return payload as AuthTokenPayload;
 }
