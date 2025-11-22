@@ -3,38 +3,45 @@ import { LoginSchema, RegisterSchema } from "./auth.schema";
 import { authService } from "./auth.service";
 
 export class AuthController {
+  private handleError(res: Response, error: unknown) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return res.status(400).json({ error: message });
+  }
+
   async register(req: Request, res: Response) {
-    console.debug(req);
+    const parsed = RegisterSchema.safeParse(req.body);
 
-    const parse = RegisterSchema.safeParse(req.body);
-
-    console.debug(parse);
-
-    if (!parse.success) {
-      return res.status(400).json({ errors: parse.error.flatten() });
+    if (!parsed.success) {
+      return res.status(400).json({
+        errors: parsed.error,
+      });
     }
 
     try {
-      const result = await authService.register(parse.data);
-      return res.json({ message: "Registered successfully", userId: result.id });
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : String(err);
-      return res.status(400).json({ error: message });
+      const result = await authService.register(parsed.data);
+      return res.status(201).json({
+        message: "Registered successfully",
+        userId: result.id,
+      });
+    } catch (error) {
+      return this.handleError(res, error);
     }
   }
 
   async login(req: Request, res: Response) {
-    const parse = LoginSchema.safeParse(req.body);
-    if (!parse.success) {
-      return res.status(400).json({ errors: parse.error.flatten() });
+    const parsed = LoginSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      return res.status(400).json({
+        errors: parsed.error,
+      });
     }
 
     try {
-      const result = await authService.login(parse.data);
+      const result = await authService.login(parsed.data);
       return res.json(result);
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : String(err);
-      return res.status(400).json({ error: message });
+    } catch (error) {
+      return this.handleError(res, error);
     }
   }
 }
