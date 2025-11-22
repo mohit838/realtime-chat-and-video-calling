@@ -1,11 +1,9 @@
 import "express";
+import type { AuthUser } from "../modules/auth/auth.types";
 
-declare module "express-serve-static-core" {
+declare module "express" {
   interface Request {
-    user?: {
-      id: number;
-      email: string;
-      [key: string]: unknown;
-    };
+    user?: AuthUser;
+    requestId?: string;
   }
 }

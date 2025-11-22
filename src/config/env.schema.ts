@@ -4,12 +4,13 @@ export const EnvSchema = z.object({
   app: z.object({
     name: z.string(),
     env: z.enum(["development", "staging", "production"]),
-    port: z.number(),
+    port: z.coerce.number(),
+    corsOrigin: z.union([z.string(), z.array(z.string())]).optional(),
   }),
 
   db: z.object({
     host: z.string(),
-    port: z.number(),
+    port: z.coerce.number(),
     user: z.string(),
     pass: z.string(),
     name: z.string(),
@@ -17,9 +18,9 @@ export const EnvSchema = z.object({
 
   redis: z.object({
     host: z.string(),
-    port: z.number(),
+    port: z.coerce.number(),
     pass: z.string(),
-    db: z.number(),
+    db: z.coerce.number(),
   }),
 
   jwt: z.object({
@@ -31,6 +32,27 @@ export const EnvSchema = z.object({
     enabled: z.boolean(),
     brokers: z.array(z.string()).nonempty(),
     clientId: z.string().min(1),
+  }),
+
+  mongo: z.object({
+    uri: z.url(),
+    db: z.string(),
+    collection: z.string(),
+  }),
+
+  helmet: z.object({
+    contentSecurityPolicy: z.boolean().default(false),
+    crossOriginEmbedderPolicy: z.boolean().default(false),
+  }),
+
+  rateLimiter: z.object({
+    windowMs: z.coerce.number(),
+    maxRequests: z.coerce.number(),
+  }),
+
+  logger: z.object({
+    enabled: z.boolean(),
+    level: z.enum(["info", "warn", "error", "debug"]),
   }),
 });
 
