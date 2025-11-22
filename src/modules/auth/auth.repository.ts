@@ -1,4 +1,4 @@
-import type { RowDataPacket, ResultSetHeader } from "mysql2";
+import type { ResultSetHeader, RowDataPacket } from "mysql2";
 import { getDb } from "../../config/db";
 
 interface RoleRow extends RowDataPacket {
@@ -16,18 +16,14 @@ export class AuthRepository {
   private db = getDb();
 
   async findByEmail(email: string): Promise<UserRow | null> {
-    const [rows] = await this.db.query<UserRow[]>(
-      "SELECT * FROM users WHERE email = ? LIMIT 1",
-      [email]
-    );
+    const [rows] = await this.db.query<UserRow[]>("SELECT * FROM users WHERE email = ? LIMIT 1", [
+      email,
+    ]);
     return rows[0] || null;
   }
 
   async findById(id: number): Promise<UserRow | null> {
-    const [rows] = await this.db.query<UserRow[]>(
-      "SELECT * FROM users WHERE id = ? LIMIT 1",
-      [id]
-    );
+    const [rows] = await this.db.query<UserRow[]>("SELECT * FROM users WHERE id = ? LIMIT 1", [id]);
     return rows[0] || null;
   }
 
