@@ -2,13 +2,38 @@
 ├── DEV_GUIDE.md
 ├── docker-compose.yml
 ├── Dockerfile
+├── env
+│   ├── env.example.yml
+│   └── env.yml
 ├── eslint.config.js
+├── migrations
+│   └── 0001_init.up.sql
 ├── package.json
 ├── package-lock.json
 ├── project-tree.txt
 ├── README.md
 ├── src
+│   ├── app.ts
+│   ├── config
+│   │   ├── constants.ts
+│   │   ├── db.ts
+│   │   ├── env.schema.ts
+│   │   ├── env.ts
+│   │   ├── kafka.ts
+│   │   ├── redis.ts
+│   │   └── types.ts
+│   ├── migrations
+│   │   └── migrate.ts
 │   └── server.ts
-└── tsconfig.json
+├── test
+│   ├── integration
+│   │   └── server.integration.test.ts
+│   ├── server.test.ts
+│   └── unit
+│       └── math.test.ts
+├── test-results
+├── tsconfig.json
+├── tsconfig.test.json
+└── vitest.config.ts
 
-1 directory, 10 files
+9 directories, 27 files
