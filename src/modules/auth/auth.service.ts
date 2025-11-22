@@ -5,6 +5,7 @@ import { generateRefreshToken, signToken } from "./auth.utils";
 import { refreshTokenService } from "./refresh.service";
 
 export class AuthService {
+  // 1. Register
   async register(data: RegisterInput) {
     const existing = await authRepository.findByEmail(data.email);
     if (existing) throw new Error("Email already exists");
@@ -17,6 +18,7 @@ export class AuthService {
     return { id: userId };
   }
 
+  // 2. Login
   async login(data: LoginInput) {
     const user = await authRepository.findByEmail(data.email);
     if (!user) throw new Error("Invalid email or password");

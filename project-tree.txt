@@ -38,7 +38,8 @@
 │   │   ├── shutdown.ts
 │   │   └── types.ts
 │   ├── middlewares
-│   │   └── request-logger.ts
+│   │   ├── request-logger.ts
+│   │   └── role-guard.ts
 │   ├── migrations
 │   │   └── migrate.ts
 │   ├── modules
@@ -50,7 +51,8 @@
 │   │       ├── auth.schema.ts
 │   │       ├── auth.service.ts
 │   │       ├── auth.types.ts
-│   │       └── auth.utils.ts
+│   │       ├── auth.utils.ts
+│   │       └── refresh.service.ts
 │   ├── server.ts
 │   ├── types
 │   │   ├── api-response.ts
@@ -70,4 +72,4 @@
 ├── tsconfig.test.json
 └── vitest.config.ts
 
-13 directories, 57 files
+13 directories, 59 files

@@ -7,6 +7,7 @@ import { generateRefreshToken, signToken } from "./auth.utils";
 import { refreshTokenService } from "./refresh.service";
 
 export class AuthController {
+  // 1. Register
   register = async (req: Request, res: Response) => {
     const parsed = RegisterSchema.safeParse(req.body);
     if (!parsed.success) throw parsed.error;
@@ -15,6 +16,7 @@ export class AuthController {
     return res.status(201).json(successResponse(result, "Registered"));
   };
 
+  // 2. Login
   login = async (req: Request, res: Response) => {
     const parsed = LoginSchema.safeParse(req.body);
     if (!parsed.success) throw parsed.error;
@@ -24,6 +26,7 @@ export class AuthController {
     return res.json(successResponse(result, "Logged in"));
   };
 
+  // 3. Token Refresh
   refresh = async (req: Request, res: Response) => {
     const parsed = RefreshSchema.safeParse(req.body);
     if (!parsed.success) throw parsed.error;
@@ -52,11 +55,13 @@ export class AuthController {
     );
   };
 
+  // 4. Logout
   logout = async (req: Request, res: Response) => {
     await refreshTokenService.delete(req.user!.id);
     return res.json(successResponse(null, "Logged out"));
   };
 
+  // 5. Get Profile
   me = async (req: Request, res: Response) => {
     return res.json(successResponse(req.user, "Profile fetched"));
   };
