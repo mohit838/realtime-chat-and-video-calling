@@ -38,6 +38,7 @@ export const EnvSchema = z.object({
     uri: z.url(),
     db: z.string(),
     collection: z.string(),
+    ttlSeconds: z.coerce.number().default(864000), // 10 days
   }),
 
   helmet: z.object({
