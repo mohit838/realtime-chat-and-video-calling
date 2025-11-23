@@ -4,6 +4,7 @@ import app from "./app";
 import { testDbConnection } from "./config/db";
 import { env } from "./config/env";
 import { testKafkaConnection } from "./config/kafka";
+import { setupMongoTTL } from "./config/mongo-ttl";
 import { testRedisConnection } from "./config/redis";
 import { setupGracefulShutdown } from "./config/shutdown";
 
@@ -15,6 +16,8 @@ async function start() {
   server = app.listen(env.app.port, () => {
     console.debug(`Server running at http://localhost:${env.app.port}`);
   });
+
+  await setupMongoTTL();
 
   setupGracefulShutdown(server);
 }
