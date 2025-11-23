@@ -16,7 +16,7 @@ export const globalErrorHandler: ErrorRequestHandler = (err, req, res, _next) =>
   });
 
   if (err instanceof ZodError) {
-    return res.status(400).json(errorResponse(err.format(), "Validation failed"));
+    return res.status(400).json(errorResponse(err, "Validation failed"));
   }
 
   const message = err instanceof Error ? err.message : "Internal Server Error";
