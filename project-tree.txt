@@ -36,11 +36,13 @@
 │   │   ├── rateLimiter.ts
 │   │   ├── redis.ts
 │   │   ├── shutdown.ts
+│   │   ├── swagger.ts
 │   │   └── types.ts
 │   ├── middlewares
 │   │   ├── request-logger.ts
 │   │   └── role-guard.ts
 │   ├── migrations
+│   │   ├── make-migration.ts
 │   │   └── migrate.ts
 │   ├── modules
 │   │   └── auth
@@ -53,6 +55,10 @@
 │   │       ├── auth.types.ts
 │   │       ├── auth.utils.ts
 │   │       └── refresh.service.ts
+│   ├── realtime
+│   │   ├── chat.gateway.ts
+│   │   ├── presence.gateway.ts
+│   │   └── socket.ts
 │   ├── server.ts
 │   ├── types
 │   │   ├── api-response.ts
@@ -72,4 +78,4 @@
 ├── tsconfig.test.json
 └── vitest.config.ts
 
-13 directories, 59 files
+14 directories, 64 files

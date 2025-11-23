@@ -5,16 +5,12 @@ export default defineConfig({
     globals: true,
     environment: "node",
 
-    // Pick up all test files
-    include: ["test/**/*.{test,spec}.ts"],
-
-    // Generate coverage reports
     coverage: {
-      reporter: ["text", "json", "html"],
-      reportsDirectory: "test-results/coverage",
+      provider: "istanbul",
+      reporter: ["text", "html"],
+      reportsDirectory: "./test-results/coverage",
+      include: ["src/**/*.ts"],
+      exclude: ["**/*.test.ts"],
     },
-
-    // Save test results to JSON
-    outputFile: "test-results/results.json",
   },
 });
