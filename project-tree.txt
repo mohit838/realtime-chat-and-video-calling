@@ -6,6 +6,7 @@
 │   ├── env.example.yml
 │   └── env.yml
 ├── eslint.config.js
+├── kafka.yml
 ├── migrations
 │   ├── 000001_users.down.sql
 │   ├── 000001_users.up.sql
@@ -18,6 +19,7 @@
 ├── package-lock.json
 ├── project-tree.txt
 ├── README.md
+├── redis.yml
 ├── src
 │   ├── app.ts
 │   ├── config
@@ -72,10 +74,15 @@
 │   ├── integration
 │   │   └── server.integration.test.ts
 │   ├── server.test.ts
+│   ├── test-env.ts
 │   └── unit
-│       └── math.test.ts
+│       └── auth
+│           ├── auth.middleware.unit.test.ts
+│           ├── auth.service.unit.test.ts
+│           └── auth.utils.unit.test.ts
+├── test-results
 ├── tsconfig.json
 ├── tsconfig.test.json
 └── vitest.config.ts
 
-14 directories, 64 files
+16 directories, 69 files
