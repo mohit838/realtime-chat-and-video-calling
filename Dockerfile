@@ -1,50 +1,24 @@
-# ====================================================
-# 1. Base deps (install everything with pnpm)
-# ====================================================
-FROM node:22-alpine AS base
-
-WORKDIR /app
-
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
-COPY package.json pnpm-lock.yaml ./
-
-RUN pnpm install --frozen-lockfile
-
-
-# ====================================================
-# 2. Build stage (TypeScript -> JS)
-# ====================================================
+# 1. Builder
 FROM node:22-alpine AS build
-
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable
 
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
 COPY . .
 RUN pnpm build
 
-
-# ====================================================
-# 3. Production stage (runtime = Bun)
-# ====================================================
-FROM oven/bun:1.1.0 AS prod
-
+# 2. Production runtime
+FROM node:22-alpine AS prod
 WORKDIR /app
+RUN corepack enable
 
-# Copy compiled output
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --prod
+
 COPY --from=build /app/dist ./dist
 
-# Copy production dependencies
-COPY --from=base /app/node_modules ./node_modules
-
-# Copy config files
-COPY config/env.yml ./config/env.yml
-
 EXPOSE 5000
-
-# Bun only RUNS the built JS bundle
-CMD ["bun", "dist/server.js"]
+CMD ["node", "dist/server.js"]

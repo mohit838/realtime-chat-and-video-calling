@@ -12,21 +12,21 @@ const consoleFormat = combine(
 );
 
 export const logger = winston.createLogger({
-  level: env.app.env === "development" ? "debug" : "info",
+  level: env.APP_ENV === "development" ? "debug" : "info",
 
   format: combine(timestamp(), json()),
 
   transports: [
     // Console logging (pretty in dev, normal in prod)
     new winston.transports.Console({
-      format: env.app.env === "development" ? consoleFormat : json(),
+      format: env.APP_ENV === "development" ? consoleFormat : json(),
     }),
 
     // MongoDB logging
     new winston.transports.MongoDB({
       level: "info",
-      db: `${env.mongo.uri}/${env.mongo.db}`,
-      collection: env.mongo.collection,
+      db: `${env.MONGO_URI}/${env.MONGO_DB}`,
+      collection: env.MONGO_COLLECTION,
       tryReconnect: true,
       storeHost: true,
     }),

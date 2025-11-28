@@ -14,7 +14,7 @@ docker-up:
 	docker compose up -d
 
 docker-down:
-	docker compose down
+	docker compose down -v
 
 docker-rebuild:
 	docker compose up -d --build
@@ -30,3 +30,9 @@ kafka:
 
 mongo:
 	docker compose -f mongo.yml up -d
+
+start-monitoring:
+	docker compose -f docker-compose.monitoring.yml up -d
+
+stop-monitoring:
+	docker compose -f docker-compose.monitoring.yml down -v

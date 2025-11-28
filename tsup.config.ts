@@ -3,14 +3,16 @@ import { defineConfig } from "tsup";
 export default defineConfig({
   entry: ["src/server.ts"],
   format: ["esm"],
-  dts: true,
-  splitting: false,
-  sourcemap: true,
-  clean: true,
+  platform: "node",
   target: "node22",
   outDir: "dist",
 
-  platform: "node",
+  splitting: false,
+  sourcemap: true,
+  clean: true,
+  shims: false,
+  minify: false,
+  dts: false,
 
   esbuildOptions(options) {
     options.outExtension = { ".js": ".js" };

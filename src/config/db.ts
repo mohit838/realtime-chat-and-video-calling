@@ -6,11 +6,11 @@ let pool: mysql.Pool | null = null;
 export const getDb = () => {
   if (!pool) {
     pool = mysql.createPool({
-      host: env.db.host,
-      user: env.db.user,
-      port: env.db.port,
-      password: env.db.pass,
-      database: env.db.name,
+      host: env.DB_HOST,
+      user: env.DB_USER,
+      port: env.DB_PORT,
+      password: env.DB_PASS,
+      database: env.DB_NAME,
       waitForConnections: true,
       connectionLimit: 10,
     });
@@ -26,9 +26,9 @@ export const testDbConnection = async () => {
     const conn = await getDb().getConnection();
     await conn.ping();
     conn.release();
-    console.debug("MySQL Connected");
+    console.debug("## MySQL Connected");
   } catch (err) {
-    console.error("MySQL Connection Failed");
+    console.error(">> MySQL Connection Failed");
     console.error(err);
     process.exit(1);
   }

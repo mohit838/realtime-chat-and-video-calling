@@ -4,17 +4,17 @@ import { env } from "./env.js";
 
 export async function setupMongoTTL(): Promise<void> {
   try {
-    const client = new MongoClient(env.mongo.uri);
+    const client = new MongoClient(env.MONGO_URI);
     await client.connect();
 
-    const db = client.db(env.mongo.db);
-    const collection = db.collection(env.mongo.collection);
+    const db = client.db(env.MONGO_DB);
+    const collection = db.collection(env.MONGO_COLLECTION);
 
-    await collection.createIndex({ createdAt: 1 }, { expireAfterSeconds: env.mongo.ttlSeconds });
+    await collection.createIndex({ createdAt: 1 }, { expireAfterSeconds: env.MONGO_TTL });
 
     logInfo("Mongo TTL index created", {
-      collection: env.mongo.collection,
-      ttl: env.mongo.ttlSeconds,
+      collection: env.MONGO_COLLECTION,
+      ttl: env.MONGO_TTL,
     });
   } catch (err) {
     logError("Mongo TTL setup failed", { error: err });
