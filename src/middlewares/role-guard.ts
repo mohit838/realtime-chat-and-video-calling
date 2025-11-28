@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
-import { errorResponse } from "../types/api-response";
-import { logInfo, logWarn } from "../utils/log";
+import { errorResponse } from "../types/api-response.js";
+import { logInfo, logWarn } from "../utils/log.js";
 
 /**
  * Role-based Access Control (RBAC)

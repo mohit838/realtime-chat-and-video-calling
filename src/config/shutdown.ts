@@ -1,8 +1,8 @@
 import type { Server } from "http";
-import { LOG_MESSAGES, SHUTDOWN_SIGNALS } from "./constants";
-import { getDb } from "./db";
-import { getKafkaProducer } from "./kafka";
-import { getRedis } from "./redis";
+import { LOG_MESSAGES, SHUTDOWN_SIGNALS } from "./constants.js";
+import { getDb } from "./db.js";
+import { getKafkaProducer } from "./kafka.js";
+import { getRedis } from "./redis.js";
 
 export function setupGracefulShutdown(server: Server) {
   const handler = async (signal: string) => {

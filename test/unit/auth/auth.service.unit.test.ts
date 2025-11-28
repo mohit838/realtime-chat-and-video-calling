@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { LoginInput, RegisterInput } from "../../../src/modules/auth/auth.schema";
+import type { LoginInput, RegisterInput } from "../../../src/modules/auth/auth.schema.js";
 
 /* ============================================================
    1. MOCK MODULES — using factories (NO top-level variables!)
 ============================================================ */
-vi.mock("../../../src/modules/auth/auth.repository", () => ({
+vi.mock("../../../src/modules/auth/auth.repository.js", () => ({
   authRepository: {
     findByEmail: vi.fn(),
     createUser: vi.fn(),
@@ -20,7 +20,7 @@ vi.mock("bcryptjs", () => ({
   },
 }));
 
-vi.mock("../../../src/modules/auth/refresh.service", () => ({
+vi.mock("../../../src/modules/auth/refresh.service.js", () => ({
   refreshTokenService: {
     save: vi.fn(),
     get: vi.fn(),
@@ -28,7 +28,7 @@ vi.mock("../../../src/modules/auth/refresh.service", () => ({
   },
 }));
 
-vi.mock("../../../src/modules/auth/auth.utils", () => ({
+vi.mock("../../../src/modules/auth/auth.utils.js", () => ({
   signToken: vi.fn(),
   generateRefreshToken: vi.fn(),
 }));
@@ -37,10 +37,10 @@ vi.mock("../../../src/modules/auth/auth.utils", () => ({
    2. IMPORTS AFTER MOCKS
 ============================================================ */
 import bcrypt from "bcryptjs";
-import { authRepository } from "../../../src/modules/auth/auth.repository";
-import { AuthService } from "../../../src/modules/auth/auth.service";
-import { generateRefreshToken, signToken } from "../../../src/modules/auth/auth.utils";
-import { refreshTokenService } from "../../../src/modules/auth/refresh.service";
+import { authRepository } from "../../../src/modules/auth/auth.repository.js";
+import { AuthService } from "../../../src/modules/auth/auth.service.js";
+import { generateRefreshToken, signToken } from "../../../src/modules/auth/auth.utils.js";
+import { refreshTokenService } from "../../../src/modules/auth/refresh.service.js";
 
 /* ============================================================
    3. Define REAL UserRow shape (matching your DB schema!)

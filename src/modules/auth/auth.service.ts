@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
-import { authRepository } from "./auth.repository";
-import type { LoginInput, RegisterInput } from "./auth.schema";
-import { generateRefreshToken, signToken } from "./auth.utils";
-import { refreshTokenService } from "./refresh.service";
+import { authRepository } from "./auth.repository.js";
+import type { LoginInput, RegisterInput } from "./auth.schema.js";
+import { generateRefreshToken, signToken } from "./auth.utils.js";
+import { refreshTokenService } from "./refresh.service.js";
 
 export class AuthService {
   // 1. Register
