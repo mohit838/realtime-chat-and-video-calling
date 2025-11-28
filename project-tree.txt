@@ -1,8 +1,6 @@
 .
-├── config
-│   ├── env.example.yml
-│   └── env.yml
 ├── DEV_GUIDE.md
+├── docker-compose.monitoring.yml
 ├── docker-compose.yml
 ├── Dockerfile
 ├── eslint.config.js
@@ -18,6 +16,13 @@
 │   ├── 000003_user_roles.up.sql
 │   └── 0001_init.up.sql
 ├── mongo.yml
+├── monitoring
+│   ├── loki
+│   │   └── loki-config.yml
+│   ├── prometheus
+│   │   └── prometheus.yml
+│   └── promtail
+│       └── promtail-config.yml
 ├── mysql.yml
 ├── package.json
 ├── pnpm-lock.yaml
@@ -36,6 +41,7 @@
 │   │   ├── helmet.ts
 │   │   ├── kafka.ts
 │   │   ├── logger.ts
+│   │   ├── metrics.ts
 │   │   ├── middlewares.ts
 │   │   ├── mongo-logger.ts
 │   │   ├── mongo-ttl.ts
@@ -86,4 +92,4 @@
 ├── tsup.config.ts
 └── vitest.config.ts
 
-15 directories, 71 files
+18 directories, 74 files

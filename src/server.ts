@@ -13,8 +13,8 @@ let server: Server;
 async function start() {
   await Promise.all([testDbConnection(), testRedisConnection(), testKafkaConnection()]);
 
-  server = app.listen(env.app.port, () => {
-    console.debug(`Server running at http://localhost:${env.app.port}`);
+  server = app.listen(env.APP_PORT, () => {
+    console.debug(`Server running at http://localhost:${env.APP_PORT}`);
   });
 
   await setupMongoTTL();

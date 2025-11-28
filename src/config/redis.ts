@@ -7,11 +7,11 @@ export const getRedis = (): RedisClientType => {
   if (!client) {
     client = createClient({
       socket: {
-        host: env.redis.host,
-        port: env.redis.port,
+        host: env.REDIS_HOST,
+        port: env.REDIS_PORT,
       },
-      password: env.redis.pass || undefined,
-      database: env.redis.db,
+      password: env.REDIS_PASS || "default",
+      database: env.REDIS_DB,
     });
 
     client.on("connect", () => console.debug("## Redis connecting..."));

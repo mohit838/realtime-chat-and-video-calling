@@ -45,6 +45,8 @@
   "prettier.printWidth": 100,
   "prettier.tabWidth": 2,
   "cSpell.words": [
+    "partitioner",
+    "Redpanda",
     "Vitest",
     "webrtc"
   ],
