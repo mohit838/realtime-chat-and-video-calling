@@ -57,10 +57,6 @@
 │   │       ├── auth.types.ts
 │   │       ├── auth.utils.ts
 │   │       └── refresh.service.ts
-│   ├── realtime
-│   │   ├── chat.gateway.ts
-│   │   ├── presence.gateway.ts
-│   │   └── socket.ts
 │   ├── server.ts
 │   ├── types
 │   │   ├── api-response.ts
@@ -83,6 +79,7 @@
 ├── test-results
 ├── tsconfig.json
 ├── tsconfig.test.json
+├── tsup.config.ts
 └── vitest.config.ts
 
-16 directories, 69 files
+15 directories, 67 files
