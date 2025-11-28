@@ -6,16 +6,19 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": false,
 
-    "strict": true,
-    "esModuleInterop": true,
+    "allowJs": false,
+    "checkJs": false,
+    "resolveJsonModule": true,
     "skipLibCheck": true,
 
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
 
-    "noEmit": true
+    "strict": true,
+    "noEmit": true,
+
+    "types": ["node"]
   },
 
   "typeRoots": ["./src/config"],
