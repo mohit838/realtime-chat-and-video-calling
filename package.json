@@ -14,7 +14,7 @@
     "tsc-check": "tsc --noEmit",
     "tsc-test": "tsc --project tsconfig.test.json --noEmit",
     "lint:stage": "pnpm lint && pnpm format:check && pnpm tsc-check",
-    "dev": "tsx watch src/server.ts",
+    "dev": "bun --watch src/server.ts",
     "build": "tsup",
     "start": "node dist/server.js",
     "test": "vitest --run",
