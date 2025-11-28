@@ -1,0 +1,102 @@
+services:
+  # ===================================================
+  #  NODE APP
+  # ===================================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chat_app
+    restart: always
+    env_file:
+      - .env.production
+    ports:
+      - "1234:1234"
+    depends_on:
+      - mysql
+      - redis
+      - mongo
+      - redpanda
+    networks:
+      - chatnet
+
+  # ===================================================
+  #  MYSQL (Main Database)
+  # ===================================================
+  mysql:
+    image: mysql:8.0
+    container_name: chat_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+      MYSQL_DATABASE: ${DB_NAME}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - chatnet
+    ports:
+      - "3306:3306"
+
+  # ===================================================
+  #  REDIS (Cache, Sessions, Tokens)
+  # ===================================================
+  redis:
+    image: redis:7.0
+    container_name: chat_redis
+    command: ["redis-server", "--requirepass", "${REDIS_PASS}"]
+    restart: always
+    volumes:
+      - redis_data:/data
+    networks:
+      - chatnet
+    ports:
+      - "6379:6379"
+
+  # ===================================================
+  #  MONGO (Audit Logs / TTL logs)
+  # ===================================================
+  mongo:
+    image: mongo:6.0
+    container_name: chat_mongo
+    restart: always
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - chatnet
+    ports:
+      - "27017:27017"
+
+  # ===================================================
+  #  KAFKA (Redpanda — Lightweight & Fast)
+  # ===================================================
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:latest
+    container_name: chat_redpanda
+    restart: unless-stopped
+    command:
+      - redpanda start
+      - --overprovisioned
+      - --smp 1
+      - --memory 2G
+      - --reserve-memory 0M
+      - --node-id 1
+      - --check=false
+      - --pandaproxy-addr=0.0.0.0:8082
+      - --advertise-pandaproxy-addr=redpanda:8082
+      - --kafka-addr=PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr=PLAINTEXT://redpanda:9092
+    networks:
+      - chatnet
+    ports:
+      - "9092:9092"
+
+# ===================================================
+# NETWORK + VOLUMES
+# ===================================================
+networks:
+  chatnet:
+
+volumes:
+  mysql_data:
+  redis_data:
+  mongo_data:

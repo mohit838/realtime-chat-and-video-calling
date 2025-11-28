@@ -36,3 +36,12 @@ start-monitoring:
 
 stop-monitoring:
 	docker compose -f docker-compose.monitoring.yml down -v
+
+build-project:
+	docker compose -f docker-compose.prod.yml up --build -d
+
+start-project:
+	docker compose -f docker-compose.prod.yml up -d
+
+stop-project:
+	docker compose -f docker-compose.prod.yml down -v
