@@ -1,87 +1,92 @@
-# 🚀 Realtime Chat App & Video Calling
+# **Realtime Chat & Video Calling Platform**
 
-_A modern, scalable realtime communication platform._
+_A modern, scalable realtime communication system built for chat, voice, and video._
 
-## 📌 Overview
+---
 
-This project implements a **hybrid realtime architecture** combining REST APIs and WebSocket-based communication. Users can chat, send voice messages, share media, and make 1:1 or group video calls using WebRTC.
+## 🚀 Overview
 
-The system follows clean architecture, domain-driven modularity, strong security, and production-ready logging with monitoring and role-based access control.
+This project implements a **hybrid realtime architecture** combining:
+
+- **REST APIs** (for persistence and business logic)
+- **WebSocket signaling** (for realtime chat & WebRTC calls)
+- **Redis Pub/Sub** (cross-instance broadcasting)
+- **MySQL** (persistent storage)
+- **MongoDB** (centralized audit logs)
+- **Kafka / Redpanda** (future distributed events)
+
+It follows clean, modular architecture with strong security, observability, and production-ready conventions.
 
 ---
 
 ## ✨ Features
 
-### 🗨️ **Realtime Chat**
+### 🗨️ Realtime Chat
 
-- Redis Pub/Sub-based realtime delivery
-- Persistent message history (MySQL)
-- Seen/unseen receipts
+- Redis Pub/Sub-based realtime messaging
+- Persistent chat history in MySQL
+- Seen/Delivered receipts
 - Typing indicators
 - Room-based messaging
 - Role-based access control
 
-### 🎙 **Voice Messages**
+### 🎙 Voice Messages
 
 - Streaming upload
 - Stored in MinIO
-- Secure signed URLs for access
+- Secure signed URL delivery
 
-### 🎥 **WebRTC Video Calling**
+### 🎥 WebRTC Video Calling
 
-- 1-to-1 Video & Audio
-- Group video calling (Mesh → SFU Ready)
-- STUN & TURN support
-- Socket.IO Signaling Server
+- 1:1 audio/video calls
+- Group calls (mesh model; SFU-ready)
+- STUN/TURN support
+- Socket.IO signaling layer
 
-### 🔐 **Authentication & Security**
+### 🔐 Authentication & Security
 
-- JWT Access Tokens
-- Refresh Token rotation (Redis)
-- RoleGuard (admin, moderator, user)
-- Helmet, rate limiting, CORS
-- Request ID tracing
+- JWT (Access + Refresh rotation)
+- Redis-based token invalidation
+- RoleGuard middleware
 - Zod validation
+- Helmet, CORS, Rate limiting
+- Request ID tracing
 
-### 🔍 **Observability & Logging**
+### 🔍 Observability & Logging
 
-- Winston-based logging
-- Centralized MongoDB log storage
-- TTL index auto-cleans logs after 10 days
-- Request-level logging
+- Winston logger
+- Centralized MongoDB logs
+- Automatic TTL cleanup after 10 days
+- Per-request contextual metadata
 
 ---
 
-## 🛠️ **Tech Stack**
+## 🛠 Tech Stack
 
 ### Backend
 
-- **Node.js + Express + TypeScript**
-- **MySQL** (migration system included)
-- **Redis Pub/Sub**
-- **Socket.IO**
-- **WebRTC**
-- **MinIO**
-- **Kafka (future-ready integration)**
-- **Zod**
-- **Winston**
-- **MongoDB (for logs)**
+- Node.js + Express + TypeScript
+- MySQL (with migrations)
+- Redis Pub/Sub
+- WebRTC + Socket.IO
+- Kafka/Redpanda (future ready)
+- Zod for validation
+- MongoDB for logs
+- MinIO for media
 
 ### Dev Tools
 
-- Docker
-- ESLint
-- Prettier
-- ts-node
-- pm2 (production)
+- Docker, Docker Compose
+- ESLint + Prettier
+- Vitest + Supertest
 - Swagger UI
+- PM2 (optional production runtime)
 
 ---
 
 ## 📁 Folder Structure
 
 ```
-
 src/
 ├── app.ts
 ├── server.ts
@@ -114,209 +119,261 @@ src/
 ├── migrations/
 ├── utils/
 └── types/
-
 ```
 
 ---
 
 ## 📦 Installation
 
+### 1. Clone the repository
+
 ```bash
 git clone <repo-url>
 cd realtime-chat
-npm install
 ```
 
-Copy example environment:
+### 2. Install dependencies
 
 ```bash
-cp env/env.example.yml env/env.yml
+pnpm install
 ```
 
-Edit credentials for:
+### 3. Copy environment file
+
+```bash
+cp config/env.example.yml config/env.yml
+```
+
+### 4. Update credentials
+
+Modify:
 
 - MySQL
 - Redis
+- MongoDB
 - MinIO
-- JWT
+- JWT secrets
 
 ---
 
 ## ▶️ Running the App
 
-### Development
+### Development Mode
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
-### Build
+### Build the project
 
 ```bash
-npm run build
+pnpm build
 ```
 
-### Production
+### Production Start
 
 ```bash
-npm run start
+pnpm start
 ```
 
 ---
 
 ## 🔧 Database Migrations
 
-### Run all migrations
+### Run migrations
 
 ```bash
-npm run migrate up
+pnpm migrate up
 ```
 
-### Rollback last batch
+### Rollback
 
 ```bash
-npm run migrate rollback
+pnpm migrate rollback
 ```
 
 ---
 
-## 🔥 Realtime Architecture (Hybrid Model)
+# 🐳 Docker Setup
 
-### 🧱 Core Concept
+Each dependency is provided as a **one-click Docker service**.
 
-- REST = persistence
-- WebSocket = realtime
+### Start API
 
-### Flow Diagram
+```bash
+docker compose up -d
+```
+
+### Start MySQL
+
+```bash
+docker compose -f mysql.yml up -d
+```
+
+### Start Redis
+
+```bash
+docker compose -f redis.yml up -d
+```
+
+### Start Kafka (Redpanda)
+
+```bash
+docker compose -f kafka.yml up -d
+```
+
+### Start MongoDB
+
+```bash
+docker compose -f mongo.yml up -d
+```
+
+No installation required on host machine.
+
+---
+
+# 🔥 Realtime Architecture (Hybrid Model)
+
+### Core Concept
+
+- **REST** -> storing messages
+- **WebSocket** -> realtime delivery
+- **Redis Pub/Sub** -> multi-instance broadcasting
 
 ```
-Client → REST → MySQL (store message)
-Client ← WS ← Redis Pub/Sub ← Server
+Client -> REST -> MySQL (store message)
+Client <- WS <- Redis Pub/Sub <- Server
 ```
 
 ### WebRTC Signaling
 
 ```
-offer → answer → ICE candidates → STUN/TURN → P2P stream
+offer -> answer -> ICE candidates -> STUN/TURN -> P2P media stream
 ```
 
 ---
 
-## 🔐 Security Highlights
+# 🔐 Security Overview
 
 - Helmet security headers
+- CORS restrictions
+- Strong Zod validation
 - Rate limiting per IP
-- Zod input validation
 - Encrypted passwords (bcrypt)
 - Refresh token rotation
-- RoleGuard for admin/mod/user
-- JWT Blacklist (Redis-based logout)
-- Mongo audit logs with TTL deletion
+- JWT blacklist (Redis)
+- RoleGuard for admin/user/moderator
+- Winston logging with requestId tracking
+- MongoDB TTL logs (auto-delete after 10 days)
 
 ---
 
-## 📘 API Documentation
+# 📘 API Documentation (Swagger)
 
-Swagger UI available at:
+After running the server:
 
 ```
-/docs
+http://localhost:<port>/docs
 ```
 
-Supports:
+Includes:
 
-- Modular YAML
-- BearerAuth
-- Components & Schemas
-- Full auth module
-- Future chat routes
+- Modular schemas
+- BearerAuth security
+- Auth routes
+- Future chat and call endpoints
 
 ---
 
-## 💾 Media Storage
+# 💾 Media Storage (MinIO)
 
 MinIO is used for:
 
-- voice messages
-- images
-- attachments
+- voice notes
+- image uploads
+- file attachments
 
-Signed URLs ensure secure temporary access.
-
----
-
-## 📊 Logging & Monitoring
-
-Winston + MongoDB:
-
-- requestId for tracing
-- error logs with metadata
-- auth logs (login/register)
-- TTL automatically deletes logs after 10 days
+Signed URLs provide temporary secure access.
 
 ---
 
-## 🧪 Testing
+# 📊 Logging & Monitoring
+
+### Features:
+
+- requestId tracing
+- structured logs
+- error logging with metadata
+- user activity logs
+- TTL deletion after 10 days
+
+Stored in MongoDB.
+
+---
+
+# 🧪 Testing
 
 ```
-npm test
-npm run test:unit
-npm run test:integration
+pnpm test
+pnpm test:unit
+pnpm test:integration
 ```
 
-Uses:
+Includes:
 
 - Vitest
 - Supertest
-- Test containers (optional)
+- Mocked Redis
+- Mocked Kafka (future)
 
 ---
 
 # ❓ Daily Interview Questions
 
-_(Updated every day — for continuous learning)_
+_A new section is added daily for continuous learning._
 
-### **Day 1 — Backend & Realtime Basics**
+### Day 1 — Backend & Realtime Basics
 
-| Question                              | One-line Answer                                                  |
-| ------------------------------------- | ---------------------------------------------------------------- |
-| What is hybrid chat architecture?     | REST for storing messages, WS for realtime delivery.             |
-| Why Redis Pub/Sub?                    | Ultra-fast broadcasting between instances.                       |
-| Why not store chat messages in Redis? | Redis is not durable.                                            |
-| Why JWT needs refresh tokens?         | Access tokens must stay short-lived for security.                |
-| Why use STUN/TURN in WebRTC?          | STUN discovers public IP; TURN relays media if direct P2P fails. |
-| Why Zod in controllers?               | Prevent invalid input from reaching services.                    |
-| Why rate limiting?                    | Protects API from brute-force attacks.                           |
-| What is requestId in logs?            | Tracks one request across logs.                                  |
-| Why MongoDB TTL logs?                 | Auto-clean old logs without manual scripts.                      |
-| Why MinIO vs MySQL?                   | MinIO is optimized for large binary objects.                     |
+| Question                          | Answer                                         |
+| --------------------------------- | ---------------------------------------------- |
+| What is hybrid chat architecture? | REST for persistence, WS for realtime events   |
+| Why Redis Pub/Sub?                | For instant multi-instance broadcasting        |
+| Why not store chats in Redis?     | Redis is not durable                           |
+| Why JWT refresh tokens?           | Short-lived access + long-lived secure refresh |
+| Why STUN/TURN?                    | STUN discovers IP, TURN relays if P2P fails    |
+| Why Zod?                          | Prevent invalid input reaching services        |
+| Why rate limiting?                | Protect API from brute-force                   |
+| What is requestId?                | A unique ID tracing a full request flow        |
+| Why MongoDB TTL logs?             | Auto-clean older logs                          |
+| Why MinIO?                        | MySQL is not for binary objects                |
 
-> _Add a new Day section every day._
+(More days are added automatically.)
 
 ---
 
-## 🧭 Roadmap
+# 🧭 Roadmap
 
-- [ ] Realtime chat events
-- [ ] Message seen/delivered
+- [ ] Chat events (send, delivered, seen)
+- [ ] Reactions & emoji support
+- [ ] Typing events
 - [ ] Voice messaging
 - [ ] File uploads
 - [ ] WebRTC signaling
-- [ ] 1-to-1 video calling
-- [ ] Group calling (mesh)
-- [ ] SFU server (media soup / livekit)
-- [ ] Kafka message archiving
-- [ ] Chat moderation pipeline
+- [ ] 1:1 calling
+- [ ] Group mesh calling
+- [ ] SFU upgrade (mediasoup/livekit)
+- [ ] Kafka-based message archiving
+- [ ] Moderation pipeline
 
 ---
 
-## 👨‍💻 Author
+# 👨‍💻 Author
 
 **Mohit**
-A backend engineer passionate about scalable systems, realtime communication, and clean architecture.
+Backend engineer passionate about scalable systems & realtime communication.
 
 ---
 
-## ⭐ Support
+# ⭐ Support
 
-If you like this project, give it a ⭐ on GitHub.
+If you found this useful, leave a ⭐ on GitHub!
