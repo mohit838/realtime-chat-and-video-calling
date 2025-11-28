@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { authGuard } from "../../../src/modules/auth/auth.middleware";
-import * as utils from "../../../src/modules/auth/auth.utils";
+import { authGuard } from "../../../src/modules/auth/auth.middleware.js";
+import * as utils from "../../../src/modules/auth/auth.utils.js";
 
 // ------------------------------
 // Patch Request type ONLY for tests

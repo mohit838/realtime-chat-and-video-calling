@@ -1,7 +1,7 @@
 import fs from "fs";
 import type { RowDataPacket } from "mysql2/promise";
 import path from "path";
-import { getDb } from "../config/db";
+import { getDb } from "../config/db.js";
 
 const MIGRATIONS_DIR = path.resolve(process.cwd(), "migrations");
 

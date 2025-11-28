@@ -22,7 +22,7 @@
     "**/dist": false,
     "**/.git": true,
     "**/.vscode": false,
-    "**/.husky": true
+    "**/.husky": false
   },
 
   // Terminal

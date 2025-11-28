@@ -1,4 +1,4 @@
-import { getRedis } from "../../config/redis";
+import { getRedis } from "../../config/redis.js";
 
 const redis = getRedis();
 

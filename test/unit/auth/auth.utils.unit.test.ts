@@ -16,7 +16,7 @@ vi.mock("jose", () => {
 });
 
 // Import after mock
-import { signToken, verifyToken } from "../../../src/modules/auth/auth.utils";
+import { signToken, verifyToken } from "../../../src/modules/auth/auth.utils.js";
 
 describe("Auth Utils", () => {
   it("signToken() returns a JWT string", async () => {

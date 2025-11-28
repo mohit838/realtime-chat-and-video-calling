@@ -1,7 +1,6 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
+#!/usr/bin/env sh
 
-echo "🔍 Running integration tests..."
-npm run test:integration --silent || exit 1
+echo "🚀 Running integration tests..."
+pnpm test:integration || exit 1
 
-echo "🚀 Pre-push checks passed!"
+echo "✨ Pre-push checks passed!"

@@ -1,6 +1,6 @@
 import { MongoClient } from "mongodb";
-import { logError, logInfo } from "../utils/log";
-import { env } from "./env";
+import { logError, logInfo } from "../utils/log.js";
+import { env } from "./env.js";
 
 export async function setupMongoTTL(): Promise<void> {
   try {

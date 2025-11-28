@@ -2,7 +2,7 @@ import fs from "fs";
 import yaml from "js-yaml";
 import path from "path";
 import { z } from "zod";
-import { EnvSchema, type EnvType } from "./env.schema";
+import { EnvSchema, type EnvType } from "./env.schema.js";
 
 const envPath = path.join(process.cwd(), "env/env.yml");
 

@@ -1,5 +1,5 @@
 import { Kafka, type Consumer, type Producer } from "kafkajs";
-import { env } from "./env";
+import { env } from "./env.js";
 
 let kafkaInstance: Kafka | null = null;
 let producer: Producer | null = null;

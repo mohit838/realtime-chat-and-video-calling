@@ -1,6 +1,6 @@
 import { SignJWT, jwtVerify } from "jose";
-import { env } from "../../config/env";
-import type { AuthTokenPayload } from "./auth.types";
+import { env } from "../../config/env.js";
+import type { AuthTokenPayload } from "./auth.types.js";
 import { randomUUID } from "crypto";
 
 const secret = new TextEncoder().encode(env.jwt.secret);

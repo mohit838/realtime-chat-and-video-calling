@@ -1,8 +1,8 @@
 import express from "express";
-import { corsConfig } from "./cors";
-import { securityHeaders } from "./helmet";
-import { connectMongoLogger } from "./mongo-logger";
-import { apiRateLimiter } from "./rateLimiter";
+import { corsConfig } from "./cors.js";
+import { securityHeaders } from "./helmet.js";
+import { connectMongoLogger } from "./mongo-logger.js";
+import { apiRateLimiter } from "./rateLimiter.js";
 
 export function registerMiddlewares(app: express.Application) {
   app.use(securityHeaders);

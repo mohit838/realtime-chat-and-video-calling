@@ -1,10 +1,10 @@
-import { Router } from "express";
-import { roleGuard } from "../../middlewares/role-guard";
-import { catchAsync } from "../../utils/catchAsync";
-import { authController } from "./auth.controller";
-import { authGuard } from "./auth.middleware";
+import { Router, type Router as RouterType } from "express";
+import { roleGuard } from "../../middlewares/role-guard.js";
+import { catchAsync } from "../../utils/catchAsync.js";
+import { authController } from "./auth.controller.js";
+import { authGuard } from "./auth.middleware.js";
 
-const router = Router();
+const router: RouterType = Router();
 
 /**
  * @openapi

@@ -1,8 +1,8 @@
 import type { ErrorRequestHandler } from "express";
 import { ZodError } from "zod";
-import { errorResponse } from "../types/api-response";
-import type { ExtendedRequest } from "../types/extended-request";
-import { logError } from "../utils/log";
+import { errorResponse } from "../types/api-response.js";
+import type { ExtendedRequest } from "../types/extended-request.js";
+import { logError } from "../utils/log.js";
 
 export const globalErrorHandler: ErrorRequestHandler = (err, req, res, _next) => {
   const r = req as ExtendedRequest;

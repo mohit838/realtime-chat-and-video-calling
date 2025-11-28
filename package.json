@@ -5,22 +5,25 @@
   "author": "Mohitul Islam",
   "license": "ISC",
   "main": "dist/server.js",
+  "type": "module",
   "scripts": {
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "tsc-check": "tsc --noEmit",
     "tsc-test": "tsc --project tsconfig.test.json --noEmit",
-    "build": "tsc",
-    "dev": "nodemon --watch src --exec ts-node --transpile-only src/server.ts",
+    "lint:stage": "pnpm lint && pnpm format:check && pnpm tsc-check",
+    "dev": "tsx watch src/server.ts",
+    "build": "tsup",
     "start": "node dist/server.js",
     "test": "vitest --run",
     "test:unit": "vitest --run test/unit",
     "test:integration": "vitest --run test/integration",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
-    "make:migration": "ts-node ./src/migrations/make-migration.ts",
-    "migrate": "ts-node ./src/migrations/migrate.ts"
+    "make:migration": "tsx src/migrations/make-migration.ts",
+    "migrate": "tsx src/migrations/migrate.ts"
   },
   "dependencies": {
     "bcryptjs": "3.0.3",
@@ -32,6 +35,7 @@
     "jose": "6.1.2",
     "js-yaml": "4.1.1",
     "kafkajs": "2.2.4",
+    "mongodb": "7.0.0",
     "mongoose": "9.0.0",
     "mysql2": "3.15.3",
     "redis": "5.10.0",
@@ -52,7 +56,7 @@
     "@types/supertest": "6.0.3",
     "@types/swagger-jsdoc": "6.0.4",
     "@types/swagger-ui-express": "4.1.8",
-    "@types/uuid": "^10.0.0",
+    "@types/uuid": "10.0.0",
     "@typescript-eslint/eslint-plugin": "8.47.0",
     "@typescript-eslint/parser": "8.47.0",
     "@vitest/coverage-istanbul": "4.0.12",
@@ -64,9 +68,19 @@
     "prettier": "3.6.2",
     "supertest": "7.1.4",
     "ts-node": "10.9.2",
+    "tsup": "8.5.1",
     "typescript": "5.9.3",
     "typescript-eslint": "8.47.0",
     "vitest": "4.0.12"
+  },
+  "packageManager": "pnpm@10.20.0",
+  "pnpm": {
+    "overrides": {
+      "glob": "10.4.5",
+      "inflight": "npm:@npmcli/move-file@latest",
+      "lodash.get": "4.4.2",
+      "lodash.isequal": "4.5.0"
+    }
   },
   "keywords": [
     "chat",

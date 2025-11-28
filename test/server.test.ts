@@ -1,9 +1,9 @@
-import { describe, it, expect } from "vitest";
 import request from "supertest";
-import app from "../src/app";
+import { describe, expect, it } from "vitest";
+import app from "../src/app.js";
 
 describe("GET /", () => {
-  it("Health route should return ok", async () => {
+  it("Server Health Test: Health route should return ok", async () => {
     const res = await request(app).get("/");
     expect(res.status).toBe(200);
     expect(res.body.message).toBe("ok");

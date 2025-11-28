@@ -16,7 +16,7 @@
 │   ├── 000003_user_roles.up.sql
 │   └── 0001_init.up.sql
 ├── package.json
-├── package-lock.json
+├── pnpm-lock.yaml
 ├── project-tree.txt
 ├── README.md
 ├── redis.yml

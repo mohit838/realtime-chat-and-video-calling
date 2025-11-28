@@ -1,5 +1,5 @@
+import type { Application } from "express";
 import swaggerUi from "swagger-ui-express";
-import type { Express } from "express";
 
 const swaggerDocument = {
   openapi: "3.0.0",
@@ -174,6 +174,6 @@ const swaggerDocument = {
   },
 };
 
-export function setupSwagger(app: Express) {
+export function setupSwagger(app: Application) {
   app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 }
