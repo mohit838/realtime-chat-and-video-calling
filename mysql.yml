@@ -1,0 +1,12 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: chat-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: chat_service
+    ports:
+      - "3377:3306" # Choose you port
+    volumes:
+      - ./mysql-data:/var/lib/mysql

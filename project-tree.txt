@@ -1,12 +1,14 @@
 .
+├── config
+│   ├── env.example.yml
+│   └── env.yml
 ├── DEV_GUIDE.md
 ├── docker-compose.yml
 ├── Dockerfile
-├── env
-│   ├── env.example.yml
-│   └── env.yml
 ├── eslint.config.js
+├── kafka-3b.yml
 ├── kafka.yml
+├── Makefile
 ├── migrations
 │   ├── 000001_users.down.sql
 │   ├── 000001_users.up.sql
@@ -15,6 +17,8 @@
 │   ├── 000003_user_roles.down.sql
 │   ├── 000003_user_roles.up.sql
 │   └── 0001_init.up.sql
+├── mongo.yml
+├── mysql.yml
 ├── package.json
 ├── pnpm-lock.yaml
 ├── project-tree.txt
@@ -82,4 +86,4 @@
 ├── tsup.config.ts
 └── vitest.config.ts
 
-15 directories, 67 files
+15 directories, 71 files
