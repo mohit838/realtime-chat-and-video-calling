@@ -1,102 +1,195 @@
 services:
   # ===================================================
-  #  NODE APP
+  #  AUTH SERVICE
   # ===================================================
-  app:
+  auth:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: chat_app
+    container_name: auth_service
     restart: always
     env_file:
       - .env.production
-    ports:
-      - "1234:1234"
     depends_on:
       - mysql
       - redis
       - mongo
       - redpanda
+    ports:
+      - "1971:1234" # WAS 1234
     networks:
-      - chatnet
+      - internal
+      - monitoring
 
   # ===================================================
-  #  MYSQL (Main Database)
+  #  MYSQL
   # ===================================================
   mysql:
     image: mysql:8.0
-    container_name: chat_mysql
+    container_name: auth_mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASS}
       MYSQL_DATABASE: ${DB_NAME}
+    ports:
+      - "1972:3306" # WAS 3306
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
-      - chatnet
-    ports:
-      - "3306:3306"
+      - internal
 
   # ===================================================
-  #  REDIS (Cache, Sessions, Tokens)
+  #  REDIS
   # ===================================================
   redis:
     image: redis:7.0
-    container_name: chat_redis
-    command: ["redis-server", "--requirepass", "${REDIS_PASS}"]
+    container_name: auth_redis
     restart: always
+    command: ["redis-server", "--requirepass", "${REDIS_PASS}"]
+    ports:
+      - "1973:6379" # WAS 6379
     volumes:
       - redis_data:/data
     networks:
-      - chatnet
-    ports:
-      - "6379:6379"
+      - internal
 
   # ===================================================
-  #  MONGO (Audit Logs / TTL logs)
+  #  MONGO
   # ===================================================
   mongo:
     image: mongo:6.0
-    container_name: chat_mongo
+    container_name: auth_mongo
     restart: always
+    ports:
+      - "1974:27017" # WAS 27017
     volumes:
       - mongo_data:/data/db
     networks:
-      - chatnet
-    ports:
-      - "27017:27017"
+      - internal
 
   # ===================================================
-  #  KAFKA (Redpanda — Lightweight & Fast)
+  #  REDPANDA (Kafka)
   # ===================================================
   redpanda:
-    image: docker.redpanda.com/redpandadata/redpanda:latest
-    container_name: chat_redpanda
+    image: docker.redpanda.com/redpandadata/redpanda:v25.3.1
+    container_name: auth_redpanda
     restart: unless-stopped
     command:
-      - redpanda start
+      - redpanda
+      - start
       - --overprovisioned
       - --smp 1
-      - --memory 2G
+      - --memory 1G
       - --reserve-memory 0M
       - --node-id 1
       - --check=false
-      - --pandaproxy-addr=0.0.0.0:8082
-      - --advertise-pandaproxy-addr=redpanda:8082
-      - --kafka-addr=PLAINTEXT://0.0.0.0:9092
-      - --advertise-kafka-addr=PLAINTEXT://redpanda:9092
-    networks:
-      - chatnet
+      - --kafka-addr internal://0.0.0.0:9092
+      - --advertise-kafka-addr internal://auth_redpanda:9092
+      - --default-log-level=info
     ports:
-      - "9092:9092"
+      - "1975:9092" # external kafka
+      - "1976:9644" # admin API
+    volumes:
+      - redpanda_data:/var/lib/redpanda/data
+    networks:
+      - internal
+
+  # ===================================================
+  #  PROMETHEUS
+  # ===================================================
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "1977:9090" # WAS 9090
+    networks:
+      - monitoring
+
+  # ===================================================
+  #  LOKI
+  # ===================================================
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: loki
+    volumes:
+      - ./monitoring/loki/loki-config.yml:/etc/loki/loki-config.yml
+      - ./monitoring/loki/data:/loki
+      - ./monitoring/loki/wal:/wal
+    ports:
+      - "1978:3100" # WAS 3100
+    networks:
+      - monitoring
+
+  # ===================================================
+  #  PROMTAIL
+  # ===================================================
+  promtail:
+    image: grafana/promtail:2.9.0
+    container_name: promtail
+    volumes:
+      - ./monitoring/promtail/promtail-config.yml:/etc/promtail/promtail-config.yml
+      - ./logs:/app/logs
+    networks:
+      - monitoring
+
+  # ===================================================
+  #  GRAFANA
+  # ===================================================
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: grafana
+    ports:
+      - "1979:3000" # WAS 3000
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+      - loki
+    networks:
+      - monitoring
+
+  # ===================================================
+  #  NODE EXPORTER
+  # ===================================================
+  node_exporter:
+    image: prom/node-exporter:latest
+    container_name: node_exporter
+    ports:
+      - "1980:9100" # WAS 9100
+    networks:
+      - monitoring
+
+  # ===================================================
+  #  CADVISOR
+  # ===================================================
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    ports:
+      - "1981:8080" # WAS 8080
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - monitoring
 
 # ===================================================
-# NETWORK + VOLUMES
+# NETWORKS & VOLUMES
 # ===================================================
 networks:
-  chatnet:
+  internal:
+  monitoring:
 
 volumes:
   mysql_data:
   redis_data:
   mongo_data:
+  redpanda_data:
+  grafana_data:

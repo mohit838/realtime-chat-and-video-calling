@@ -1,14 +1,18 @@
-services:
-  api:
-    build: .
-    container_name: chat-api
-    restart: unless-stopped
-    ports:
-      - "5050:5000"
-
-    # Load .env directly
-    env_file:
-      - ./.env
-
-    environment:
-      NODE_ENV: production
+auth:
+  build:
+    context: .
+    dockerfile: Dockerfile
+  container_name: auth_service
+  restart: always
+  env_file:
+    - .env.production
+  ports:
+    - "1971:1234"
+  depends_on:
+    - mysql
+    - redis
+    - mongo
+    - redpanda
+  networks:
+    - internal
+    - monitoring

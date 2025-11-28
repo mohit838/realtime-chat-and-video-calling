@@ -1,6 +1,7 @@
 .
 ├── DEV_GUIDE.md
 ├── docker-compose.monitoring.yml
+├── docker-compose.prod.yml
 ├── docker-compose.yml
 ├── Dockerfile
 ├── eslint.config.js
@@ -101,4 +102,4 @@
 ├── tsup.config.ts
 └── vitest.config.ts
 
-24 directories, 77 files
+24 directories, 78 files

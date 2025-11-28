@@ -1,4 +1,4 @@
-# 1. Builder
+# 1. Builder Stage
 FROM node:22-alpine AS build
 WORKDIR /app
 
@@ -10,7 +10,7 @@ RUN pnpm install
 COPY . .
 RUN pnpm build
 
-# 2. Production runtime
+# 2. Production Runtime Stage
 FROM node:22-alpine AS prod
 WORKDIR /app
 RUN corepack enable
@@ -20,5 +20,5 @@ RUN pnpm install --prod
 
 COPY --from=build /app/dist ./dist
 
-EXPOSE 5000
+EXPOSE 1234
 CMD ["node", "dist/server.js"]
