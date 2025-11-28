@@ -1,0 +1,97 @@
+services:
+  # -----------------------------------------------------
+  #  Prometheus
+  # -----------------------------------------------------
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - monitor
+
+  # -----------------------------------------------------
+  #  Loki (Log Storage)
+  # -----------------------------------------------------
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: loki
+    volumes:
+      - ./monitoring/loki/loki-config.yml:/etc/loki/loki-config.yml
+      - ./monitoring/loki/data:/loki
+      - ./monitoring/loki/wal:/wal
+    command: -config.file=/etc/loki/loki-config.yml
+    ports:
+      - "3100:3100"
+    networks:
+      - monitor
+
+  # -----------------------------------------------------
+  #  Promtail (Log collector → Loki)
+  # -----------------------------------------------------
+  promtail:
+    image: grafana/promtail:2.9.0
+    container_name: promtail
+    volumes:
+      - /var/log:/var/log
+      - ./monitoring/promtail/promtail-config.yml:/etc/promtail/promtail-config.yml
+      - ./logs:/app/logs # Node app logs (Winston / Pino)
+    command: -config.file=/etc/promtail/promtail-config.yml
+    networks:
+      - monitor
+
+  # -----------------------------------------------------
+  #  Grafana
+  # -----------------------------------------------------
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+    volumes:
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+      - loki
+    networks:
+      - monitor
+
+  # -----------------------------------------------------
+  #  Node Exporter (Host metrics)
+  # -----------------------------------------------------
+  node_exporter:
+    image: prom/node-exporter:latest
+    container_name: node_exporter
+    ports:
+      - "9100:9100"
+    networks:
+      - monitor
+
+  # -----------------------------------------------------
+  #  cAdvisor (Container Metrics)
+  # -----------------------------------------------------
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    ports:
+      - "8081:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - monitor
+
+networks:
+  monitor:
+
+volumes:
+  grafana-data:

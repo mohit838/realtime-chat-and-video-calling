@@ -1,6 +1,7 @@
 import express, { type Application } from "express";
 import { ROUTES } from "./config/constants.js";
 import { globalErrorHandler } from "./config/error-handler.js";
+import { metricsHandler } from "./config/metrics.js";
 import { registerMiddlewares } from "./config/middlewares.js";
 import { setupSwagger } from "./config/swagger.js";
 import authRouter from "./modules/auth/auth.routes.js";
@@ -12,6 +13,9 @@ registerMiddlewares(app);
 
 // Swagger
 setupSwagger(app);
+
+// Metrics
+app.get("/metrics", metricsHandler);
 
 // Routes
 app.use(ROUTES.AUTH, authRouter);

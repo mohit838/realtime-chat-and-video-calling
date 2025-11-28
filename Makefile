@@ -30,3 +30,9 @@ kafka:
 
 mongo:
 	docker compose -f mongo.yml up -d
+
+start-monitoring:
+	docker compose -f docker-compose.monitoring.yml up -d
+
+stop-monitoring:
+	docker compose -f docker-compose.monitoring.yml down -v
