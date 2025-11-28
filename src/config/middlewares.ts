@@ -1,4 +1,5 @@
 import express from "express";
+import { LOG_MESSAGES } from "./constants.js";
 import { corsConfig } from "./cors.js";
 import { securityHeaders } from "./helmet.js";
 import { metricsMiddleware } from "./metrics.js";
@@ -13,6 +14,6 @@ export function registerMiddlewares(app: express.Application) {
   app.use(metricsMiddleware);
 
   connectMongoLogger().catch((err) => {
-    console.error("Mongo Logger connection failed:", err);
+    console.error(`${LOG_MESSAGES.MONGO_FAIL}:`, err);
   });
 }
