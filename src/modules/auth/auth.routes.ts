@@ -1,85 +1,75 @@
-import { Router, type Router as RouterType } from "express";
+import { Router } from "express";
 import { roleGuard } from "../../middlewares/role-guard.js";
+import { validate } from "../../middlewares/validate.js";
 import { catchAsync } from "../../utils/catchAsync.js";
 import { authController } from "./auth.controller.js";
 import { authGuard } from "./auth.middleware.js";
+import { LoginSchema, RefreshSchema, RegisterSchema } from "./auth.schema.js";
 
-const router: RouterType = Router();
+const router = Router();
 
 /**
  * @openapi
  * /api/auth/register:
  *   post:
- *     summary: Register a new user
+ *     summary: Register new user
  *     tags: [Auth]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               name: { type: string }
- *               email: { type: string }
- *               password: { type: string }
+ *             $ref: "#/components/schemas/RegisterSchema"
  *     responses:
- *       201: { description: User registered successfully }
+ *       201: { description: User registered }
  *       400: { description: Validation error }
  */
-router.post("/register", catchAsync(authController.register));
+router.post("/register", validate(RegisterSchema), catchAsync(authController.register));
 
 /**
  * @openapi
  * /api/auth/login:
  *   post:
- *     summary: Login User
+ *     summary: Login user
  *     tags: [Auth]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               email: { type: string }
- *               password: { type: string }
+ *             $ref: "#/components/schemas/LoginSchema"
  *     responses:
- *       200: { description: Logged in successfully }
+ *       200: { description: Login success }
  */
-router.post("/login", catchAsync(authController.login));
+router.post("/login", validate(LoginSchema), catchAsync(authController.login));
 
 /**
  * @openapi
  * /api/auth/refresh:
  *   post:
- *     summary: Refresh Access Token
+ *     summary: Refresh access token
  *     tags: [Auth]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               userId: { type: number }
- *               refreshToken: { type: string }
+ *             $ref: "#/components/schemas/RefreshSchema"
  *     responses:
  *       200: { description: Token refreshed }
- *       401: { description: Invalid refresh token }
  */
-router.post("/refresh", catchAsync(authController.refresh));
+router.post("/refresh", validate(RefreshSchema), catchAsync(authController.refresh));
 
 /**
  * @openapi
  * /api/auth/logout:
  *   post:
- *     summary: Logout user
+ *     summary: Logout current user
  *     tags: [Auth]
  *     security:
  *       - BearerAuth: []
  *     responses:
- *       200: { description: Logged out successfully }
- *       401: { description: Unauthorized }
+ *       200: { description: Logged out }
  */
 router.post("/logout", authGuard, catchAsync(authController.logout));
 
@@ -87,13 +77,10 @@ router.post("/logout", authGuard, catchAsync(authController.logout));
  * @openapi
  * /api/auth/me:
  *   get:
- *     summary: Get current logged-in user
+ *     summary: Get current user profile
  *     tags: [Auth]
  *     security:
  *       - BearerAuth: []
- *     responses:
- *       200: { description: User profile fetched }
- *       401: { description: Unauthorized }
  */
 router.get("/me", authGuard, catchAsync(authController.me));
 
@@ -101,21 +88,16 @@ router.get("/me", authGuard, catchAsync(authController.me));
  * @openapi
  * /api/auth/admin-only:
  *   get:
- *     summary: Admin-only protected route
+ *     summary: Admin route
  *     tags: [Roles]
  *     security:
  *       - BearerAuth: []
- *     responses:
- *       200: { description: Admin content" }
- *       403: { description: Forbidden - requires admin role }
  */
 router.get(
   "/admin-only",
   authGuard,
   roleGuard("admin"),
-  catchAsync(async (_req, res) => {
-    res.json({ ok: true, message: "Admin content" });
-  })
+  catchAsync(async (_, res) => res.json({ ok: true, message: "Admin content" }))
 );
 
 /**
@@ -126,17 +108,12 @@ router.get(
  *     tags: [Roles]
  *     security:
  *       - BearerAuth: []
- *     responses:
- *       200: { description: Moderator or Admin content }
- *       403: { description: Forbidden - requires mod/admin }
  */
 router.get(
   "/mod-or-admin",
   authGuard,
   roleGuard("moderator", "admin"),
-  catchAsync(async (_req, res) => {
-    res.json({ ok: true, message: "Moderator or Admin content" });
-  })
+  catchAsync(async (_, res) => res.json({ ok: true, message: "Moderator or Admin content" }))
 );
 
 export default router;
