@@ -14,7 +14,7 @@ docker-up:
 	docker compose up -d
 
 docker-down:
-	docker compose down
+	docker compose down -v
 
 docker-rebuild:
 	docker compose up -d --build

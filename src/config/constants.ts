@@ -11,7 +11,7 @@ export const ROUTES = {
 
 export const LOG_MESSAGES = {
   SERVER_START: "Server running at",
-  MONGO_FAIL: "Mongo Logger connection failed:",
+  MONGO_FAIL: ">> Mongo Logger connection failed:",
   HTTP_CLOSED: "## HTTP server closed.",
   MYSQL_CLOSED: "## MySQL pool closed.",
   REDIS_CLOSED: "## Redis client disconnected.",

@@ -14,7 +14,7 @@
     "tsc-check": "tsc --noEmit",
     "tsc-test": "tsc --project tsconfig.test.json --noEmit",
     "lint:stage": "pnpm lint && pnpm format:check && pnpm tsc-check",
-    "dev": "bun --watch src/server.ts",
+    "dev": "tsx --watch src/server.ts",
     "build": "tsup",
     "start": "node dist/server.js",
     "test": "vitest --run",
@@ -67,6 +67,7 @@
     "prettier": "3.6.2",
     "supertest": "7.1.4",
     "tsup": "8.5.1",
+    "tsx": "^4.20.6",
     "typescript": "5.9.3",
     "typescript-eslint": "8.47.0",
     "vitest": "4.0.12"

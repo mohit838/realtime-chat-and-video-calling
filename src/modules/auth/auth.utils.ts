@@ -3,7 +3,7 @@ import { env } from "../../config/env.js";
 import type { AuthTokenPayload } from "./auth.types.js";
 import { randomUUID } from "crypto";
 
-const secret = new TextEncoder().encode(env.jwt.secret);
+const secret = new TextEncoder().encode(env.JWT_SECRET);
 
 export function generateRefreshToken(): string {
   return randomUUID();
@@ -12,7 +12,7 @@ export function generateRefreshToken(): string {
 export async function signToken(payload: AuthTokenPayload) {
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
-    .setExpirationTime(env.jwt.expiry)
+    .setExpirationTime(env.JWT_EXPIRY)
     .sign(secret);
 }
 

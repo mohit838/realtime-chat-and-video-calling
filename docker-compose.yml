@@ -5,5 +5,10 @@ services:
     restart: unless-stopped
     ports:
       - "5050:5000"
+
+    # Load .env directly
     env_file:
-      - ./config/env.yml
+      - ./.env
+
+    environment:
+      NODE_ENV: production

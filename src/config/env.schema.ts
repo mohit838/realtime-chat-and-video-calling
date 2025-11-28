@@ -1,60 +1,42 @@
 import { z } from "zod";
 
 export const EnvSchema = z.object({
-  app: z.object({
-    name: z.string(),
-    env: z.enum(["development", "staging", "production"]),
-    port: z.coerce.number(),
-    corsOrigin: z.union([z.string(), z.array(z.string())]).optional(),
-  }),
+  APP_NAME: z.string(),
+  APP_ENV: z.enum(["development", "staging", "production"]),
+  APP_PORT: z.string().transform(Number),
+  CORS_ORIGIN: z.string().transform((v) => v.split(",")),
 
-  db: z.object({
-    host: z.string(),
-    port: z.coerce.number(),
-    user: z.string(),
-    pass: z.string(),
-    name: z.string(),
-  }),
+  DB_HOST: z.string(),
+  DB_PORT: z.string().transform(Number),
+  DB_USER: z.string(),
+  DB_PASS: z.string(),
+  DB_NAME: z.string(),
 
-  redis: z.object({
-    host: z.string(),
-    port: z.coerce.number(),
-    pass: z.string(),
-    db: z.coerce.number(),
-  }),
+  REDIS_HOST: z.string(),
+  REDIS_PORT: z.string().transform(Number),
+  REDIS_PASS: z.string().optional(),
+  REDIS_DB: z.string().transform(Number),
 
-  jwt: z.object({
-    secret: z.string().min(10),
-    expiry: z.union([z.number(), z.string()]),
-  }),
+  JWT_SECRET: z.string(),
+  JWT_EXPIRY: z.string(),
 
-  kafka: z.object({
-    enabled: z.boolean(),
-    brokers: z.array(z.string()).nonempty(),
-    clientId: z.string().min(1),
-  }),
+  KAFKA_ENABLED: z.string().transform((v) => v === "true"),
+  KAFKA_BROKERS: z.string().transform((v) => v.split(",")),
+  KAFKA_CLIENT_ID: z.string(),
 
-  mongo: z.object({
-    uri: z.url(),
-    db: z.string(),
-    collection: z.string(),
-    ttlSeconds: z.coerce.number().default(864000), // 10 days
-  }),
+  MONGO_URI: z.string(),
+  MONGO_DB: z.string(),
+  MONGO_COLLECTION: z.string(),
+  MONGO_TTL: z.string().transform(Number),
 
-  helmet: z.object({
-    contentSecurityPolicy: z.boolean().default(false),
-    crossOriginEmbedderPolicy: z.boolean().default(false),
-  }),
+  HELMET_CSP: z.string().transform((v) => v === "true"),
+  HELMET_COEP: z.string().transform((v) => v === "true"),
 
-  rateLimiter: z.object({
-    windowMs: z.coerce.number(),
-    maxRequests: z.coerce.number(),
-  }),
+  RATE_LIMIT_WINDOW_MS: z.string().transform(Number),
+  RATE_LIMIT_MAX_REQUESTS: z.string().transform(Number),
 
-  logger: z.object({
-    enabled: z.boolean(),
-    level: z.enum(["info", "warn", "error", "debug"]),
-  }),
+  LOGGER_ENABLED: z.string().transform((v) => v === "true"),
+  LOGGER_LEVEL: z.string(),
 });
 
 export type EnvType = z.infer<typeof EnvSchema>;
