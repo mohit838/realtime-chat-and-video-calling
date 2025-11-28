@@ -1,7 +1,4 @@
 .
-├── config
-│   ├── env.example.yml
-│   └── env.yml
 ├── DEV_GUIDE.md
 ├── docker-compose.yml
 ├── Dockerfile
@@ -86,4 +83,4 @@
 ├── tsup.config.ts
 └── vitest.config.ts
 
-15 directories, 71 files
+14 directories, 69 files
