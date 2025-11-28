@@ -1,44 +1,50 @@
-# ---------------------------------------
-# 1. Base image
-# ---------------------------------------
+# ====================================================
+# 1. Base deps (install everything with pnpm)
+# ====================================================
 FROM node:22-alpine AS base
 
 WORKDIR /app
 
-# Install only production dependencies speeds up rebuild
-COPY package*.json ./
-RUN npm install --omit=dev
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# ---------------------------------------
+COPY package.json pnpm-lock.yaml ./
+
+RUN pnpm install --frozen-lockfile
+
+
+# ====================================================
 # 2. Build stage (TypeScript -> JS)
-# ---------------------------------------
+# ====================================================
 FROM node:22-alpine AS build
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm install
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
 COPY . .
+RUN pnpm build
 
-RUN npm run build
 
-# ---------------------------------------
-# 3. Production runtime
-# ---------------------------------------
-FROM node:22-alpine AS prod
+# ====================================================
+# 3. Production stage (runtime = Bun)
+# ====================================================
+FROM oven/bun:1.1.0 AS prod
 
 WORKDIR /app
 
-# copy built JS files
+# Copy compiled output
 COPY --from=build /app/dist ./dist
 
-# copy node_modules (production-only)
+# Copy production dependencies
 COPY --from=base /app/node_modules ./node_modules
 
-# copy environment files (if needed)
-COPY .env ./
+# Copy config files
+COPY config/env.yml ./config/env.yml
 
 EXPOSE 5000
 
-CMD ["node", "dist/server.js"]
+# Bun only RUNS the built JS bundle
+CMD ["bun", "dist/server.js"]

@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
-import { errorResponse } from "../../types/api-response";
-import { logInfo, logWarn } from "../../utils/log";
-import { verifyToken } from "./auth.utils";
+import { errorResponse } from "../../types/api-response.js";
+import { logInfo, logWarn } from "../../utils/log.js";
+import { verifyToken } from "./auth.utils.js";
 
 export const authGuard = async (req: Request, res: Response, next: NextFunction) => {
   const header = req.headers.authorization;

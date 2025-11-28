@@ -1,11 +1,14 @@
 .
+├── config
+│   ├── env.example.yml
+│   └── env.yml
 ├── DEV_GUIDE.md
 ├── docker-compose.yml
 ├── Dockerfile
-├── env
-│   ├── env.example.yml
-│   └── env.yml
 ├── eslint.config.js
+├── kafka-3b.yml
+├── kafka.yml
+├── Makefile
 ├── migrations
 │   ├── 000001_users.down.sql
 │   ├── 000001_users.up.sql
@@ -14,10 +17,13 @@
 │   ├── 000003_user_roles.down.sql
 │   ├── 000003_user_roles.up.sql
 │   └── 0001_init.up.sql
+├── mongo.yml
+├── mysql.yml
 ├── package.json
-├── package-lock.json
+├── pnpm-lock.yaml
 ├── project-tree.txt
 ├── README.md
+├── redis.yml
 ├── src
 │   ├── app.ts
 │   ├── config
@@ -55,10 +61,6 @@
 │   │       ├── auth.types.ts
 │   │       ├── auth.utils.ts
 │   │       └── refresh.service.ts
-│   ├── realtime
-│   │   ├── chat.gateway.ts
-│   │   ├── presence.gateway.ts
-│   │   └── socket.ts
 │   ├── server.ts
 │   ├── types
 │   │   ├── api-response.ts
@@ -72,10 +74,16 @@
 │   ├── integration
 │   │   └── server.integration.test.ts
 │   ├── server.test.ts
+│   ├── test-env.ts
 │   └── unit
-│       └── math.test.ts
+│       └── auth
+│           ├── auth.middleware.unit.test.ts
+│           ├── auth.service.unit.test.ts
+│           └── auth.utils.unit.test.ts
+├── test-results
 ├── tsconfig.json
 ├── tsconfig.test.json
+├── tsup.config.ts
 └── vitest.config.ts
 
-14 directories, 64 files
+15 directories, 71 files

@@ -1,6 +1,6 @@
 import winston from "winston";
 import "winston-mongodb";
-import { env } from "./env";
+import { env } from "./env.js";
 
 const { combine, timestamp, json, colorize, printf } = winston.format;
 

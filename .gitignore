@@ -10,7 +10,7 @@ build/
 .env
 .env.*
 !.env.example
-env/env.yml
+config/env.yml
 
 # System files
 .DS_Store

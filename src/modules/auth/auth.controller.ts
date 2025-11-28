@@ -1,10 +1,10 @@
 import type { Request, Response } from "express";
-import { successResponse } from "../../types/api-response";
-import { authRepository } from "./auth.repository";
-import { LoginSchema, RefreshSchema, RegisterSchema } from "./auth.schema";
-import { authService } from "./auth.service";
-import { generateRefreshToken, signToken } from "./auth.utils";
-import { refreshTokenService } from "./refresh.service";
+import { successResponse } from "../../types/api-response.js";
+import { authRepository } from "./auth.repository.js";
+import { LoginSchema, RefreshSchema, RegisterSchema } from "./auth.schema.js";
+import { authService } from "./auth.service.js";
+import { generateRefreshToken, signToken } from "./auth.utils.js";
+import { refreshTokenService } from "./refresh.service.js";
 
 export class AuthController {
   // 1. Register

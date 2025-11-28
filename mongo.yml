@@ -1,0 +1,19 @@
+services:
+  mongo:
+    image: mongo:7.0
+    container_name: chat-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+    # Optional authentication (disabled by default)
+    # uncomment these if you want username + password
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: admin
+    #   MONGO_INITDB_ROOT_PASSWORD: strongpassword
+    #   MONGO_INITDB_DATABASE: audit_logs
+
+volumes:
+  mongo_data:

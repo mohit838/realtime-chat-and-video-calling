@@ -1,5 +1,5 @@
 import type { ResultSetHeader, RowDataPacket } from "mysql2";
-import { getDb } from "../../config/db";
+import { getDb } from "../../config/db.js";
 
 interface RoleRow extends RowDataPacket {
   name: string;

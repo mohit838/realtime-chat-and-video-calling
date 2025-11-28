@@ -1,10 +1,14 @@
 import fs from "fs";
 import yaml from "js-yaml";
 import path from "path";
+import { fileURLToPath } from "url";
 import { z } from "zod";
-import { EnvSchema, type EnvType } from "./env.schema";
+import { EnvSchema, type EnvType } from "./env.schema.js";
 
-const envPath = path.join(process.cwd(), "env/env.yml");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const envPath = path.resolve(__dirname, "../../config/env.yml");
 
 function loadYaml(): EnvType {
   if (!fs.existsSync(envPath)) {
