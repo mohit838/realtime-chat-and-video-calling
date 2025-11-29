@@ -15,7 +15,7 @@ export class AuthController {
   // Login
   login = async (req: Request, res: Response) => {
     const result = await authService.login(req.body);
-    return res.json(successResponse(result, "Logged in"));
+    return res.status(200).json(successResponse(result, "Logged in"));
   };
 
   // Refresh
@@ -49,12 +49,12 @@ export class AuthController {
   // Logout
   logout = async (req: Request, res: Response) => {
     await refreshTokenService.delete(req.user!.id);
-    return res.json(successResponse(null, "Logged out"));
+    return res.status(200).json(successResponse(null, "Logged out"));
   };
 
   // Get profile
   me = async (req: Request, res: Response) => {
-    return res.json(successResponse(req.user, "Profile fetched"));
+    return res.status(200).json(successResponse(req.user, "Profile fetched"));
   };
 }
 

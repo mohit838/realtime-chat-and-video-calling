@@ -1,3 +1,5 @@
+import { env } from "./env.js";
+
 // ==============================
 // Application Constants
 // ==============================
@@ -7,7 +9,7 @@ export const APP_CONSTANTS = {
   MAX_PAGE_SIZE: 100,
   PASSWORD_MIN_LENGTH: 6,
   SERVICE_NAME: "realtime-chat-service",
-  ENV: process.env.NODE_ENV || "development",
+  ENV: env.APP_ENV || "development",
 };
 
 // ==============================
