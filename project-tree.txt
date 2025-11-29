@@ -1,6 +1,7 @@
 .
 ├── DEV_GUIDE.md
 ├── docker-compose.monitoring.yml
+├── docker-compose.prod.yml
 ├── docker-compose.yml
 ├── Dockerfile
 ├── eslint.config.js
@@ -18,7 +19,15 @@
 ├── mongo.yml
 ├── monitoring
 │   ├── loki
-│   │   └── loki-config.yml
+│   │   ├── data
+│   │   │   ├── cache
+│   │   │   ├── chunks
+│   │   │   └── index
+│   │   │       └── uploader
+│   │   │           └── name
+│   │   ├── loki-config.yml
+│   │   └── wal
+│   │       └── 00000000
 │   ├── prometheus
 │   │   └── prometheus.yml
 │   └── promtail
@@ -52,7 +61,8 @@
 │   │   └── types.ts
 │   ├── middlewares
 │   │   ├── request-logger.ts
-│   │   └── role-guard.ts
+│   │   ├── role-guard.ts
+│   │   └── validate.ts
 │   ├── migrations
 │   │   ├── make-migration.ts
 │   │   └── migrate.ts
@@ -92,4 +102,4 @@
 ├── tsup.config.ts
 └── vitest.config.ts
 
-18 directories, 74 files
+24 directories, 78 files
